@@ -9,12 +9,12 @@ class PagetitleBase extends StatelessWidget {
 
   const PagetitleBase({
     super.key,
-    required this.title,
+    required this.title, // 필수 데이터
     this.fontsize = 20,
     this.color,
-    this.align = TextAlign.left,
-    this.padding = const EdgeInsets.all(8.0),
-  });
+    this.align = TextAlign.left, //텍스트 정렬
+    this.padding = const EdgeInsets.all(8.0), // 모든 방향 여백 설정
+  }); // 여기까지 기본값
 
   @override
   Widget build(BuildContext context) {
