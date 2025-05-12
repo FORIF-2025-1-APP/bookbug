@@ -1,4 +1,6 @@
 // ignore: file_names
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class BookCard extends StatelessWidget {
@@ -23,13 +25,14 @@ class BookCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 180,
+        height: 350,
         margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: const Color(0xFFF0EFE1), // 연한 베이지색 배경
           borderRadius: BorderRadius.circular(12.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withAlpha(25),
               blurRadius: 4.0,
               offset: const Offset(0, 2),
             ),
@@ -58,49 +61,48 @@ class BookCard extends StatelessWidget {
               ),
             ),
             // 책 정보
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 책 제목
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+            Expanded( 
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  // 작가
-                  Text(
-                    author,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  // 평점 (별점)
-                  Row(
-                    children: [
-                      RatingStars(rating: rating),
-                      const SizedBox(width: 6),
-                      Text(
-                        rating.toString(),
-                        style: TextStyle(
+                    const SizedBox(height: 4),
+                    Text(
+                      author,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[700],
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          RatingStars(rating: rating),
+                          const SizedBox(width: 6),
+                          Text(
+                          rating.toString(),
+                          style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey[700],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -118,12 +120,12 @@ class RatingStars extends StatelessWidget {
   final Color inactiveColor;
 
   const RatingStars({
-    Key? key,
+    super.key,
     required this.rating,
     this.size = 18,
     this.activeColor = Colors.amber,
     this.inactiveColor = Colors.grey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +149,7 @@ class RatingStars extends StatelessWidget {
 
 // 사용 예시
 class BookListExample extends StatelessWidget {
-  const BookListExample({Key? key}) : super(key: key);
+  const BookListExample({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +170,7 @@ class BookListExample extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 290, // 카드 높이에 맞게 조정
+            height: 300, // 카드 높이에 맞게 조정
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 10,
@@ -181,7 +183,7 @@ class BookListExample extends StatelessWidget {
                   imageUrl: 'https://via.placeholder.com/150x200',
                   onTap: () {
                     // 책 상세 페이지로 이동
-                    print('책 $index 선택됨');
+                    log('책 $index 선택됨' as num);
                   },
                 );
               },
