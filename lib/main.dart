@@ -1,3 +1,4 @@
+import 'package:bookbug/ui/core/ui/testForBookBase.dart';
 import 'package:flutter/material.dart';
 import './ui/core/themes/theme.dart';
 
@@ -98,6 +99,15 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Testforbookbase())
+                );
+              },
+              child: Text('test')
+            )
           ],
         ),
       ),
