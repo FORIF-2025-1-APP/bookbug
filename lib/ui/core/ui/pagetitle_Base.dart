@@ -26,6 +26,7 @@ class PagetitleBase extends StatelessWidget {
         style: TextStyle(
           fontSize: fontsize,
           color: color ?? Theme.of(context).colorScheme.onSurface,
+          // color 값이 없다면 ??뒤의 값을 받음.
         ),
       ),
     );

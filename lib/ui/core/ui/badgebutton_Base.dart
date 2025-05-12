@@ -32,6 +32,7 @@ class BadgebuttonBase extends StatelessWidget {
                 decoration: BoxDecoration(shape: BoxShape.circle),
                 child: ClipOval(child: Image.asset(badge, fit: BoxFit.cover)),
               ), // 안쪽 뱃지 이미지
+              // 일단 디자인 보기 위해 asset으로 받음. 아마 나중엔 image.network()로 받지 않을까 생각됨
             ),
           ),
           SizedBox(height: 18),
