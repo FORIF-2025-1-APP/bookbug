@@ -195,22 +195,25 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 290, // BookCard 위젯 높이에 맞게 조정
+          height: 280, // BookCard 위젯 높이에 맞게 조정
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: books.length,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             itemBuilder: (context, index) {
               final book = books[index];
-              return BookCard(
-                title: book['title'],
-                author: book['author'],
-                rating: book['rating'],
-                imageUrl: book['imageUrl'],
-                onTap: () {
-                  // 책 상세 페이지로 이동
-                  log('책 $index 선택됨' as num);
-                },
+              return SizedBox(
+                width: 160,
+                child: BookCard(
+                  title: book['title'],
+                  author: book['author'],
+                  rating: book['rating'],
+                  imageUrl: book['imageUrl'],
+                  onTap: () {
+                    // 책 상세 페이지로 이동
+                    log('책 $index 선택됨' as num);
+                  },
+                ),
               );
             },
           ),

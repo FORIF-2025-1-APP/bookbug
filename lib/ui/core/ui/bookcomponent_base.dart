@@ -1,6 +1,3 @@
-// ignore: file_names
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class BookCard extends StatelessWidget {
@@ -70,7 +67,7 @@ class BookCard extends StatelessWidget {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     maxLines: 1,
@@ -80,7 +77,7 @@ class BookCard extends StatelessWidget {
                     Text(
                       author,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 10,
                         color: Colors.grey[700],
                         ),
                         maxLines: 1,
@@ -94,7 +91,7 @@ class BookCard extends StatelessWidget {
                           Text(
                           rating.toString(),
                           style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 8,
                           fontWeight: FontWeight.w500,
                           color: Colors.grey[700],
                           ),
@@ -122,7 +119,7 @@ class RatingStars extends StatelessWidget {
   const RatingStars({
     super.key,
     required this.rating,
-    this.size = 18,
+    this.size = 8,
     this.activeColor = Colors.amber,
     this.inactiveColor = Colors.grey,
   });
@@ -143,54 +140,6 @@ class RatingStars extends StatelessWidget {
           color: index < rating ? activeColor : inactiveColor,
         );
       }),
-    );
-  }
-}
-
-// 사용 예시
-class BookListExample extends StatelessWidget {
-  const BookListExample({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('실시간 Top 10'),
-      ),
-      body: ListView(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              '실시간 Top 10',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 300, // 카드 높이에 맞게 조정
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 10,
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              itemBuilder: (context, index) {
-                return BookCard(
-                  title: 'Book Title',
-                  author: 'Author Name',
-                  rating: 3.5,
-                  imageUrl: 'https://via.placeholder.com/150x200',
-                  onTap: () {
-                    // 책 상세 페이지로 이동
-                    log('책 $index 선택됨' as num);
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
