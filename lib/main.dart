@@ -5,6 +5,7 @@ import 'ui/core/ui/iconbutton_base.dart';
 void main() {
   runApp(const MyApp());
 }
+
 class ExampleScreen extends StatelessWidget {
   const ExampleScreen({super.key});
 
@@ -12,7 +13,7 @@ class ExampleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // 테마 색상 사용 예시
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('도서 리뷰'),
@@ -38,12 +39,11 @@ class ExampleScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text('도서 리뷰 앱 본문'),
-      ),
+      body: const Center(child: Text('도서 리뷰 앱 본문')),
     );
   }
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -61,7 +61,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -77,12 +76,13 @@ class HomeScreen extends StatelessWidget {
             buttons: [
               CircleIconButton(
                 icon: Icons.bookmark_border,
-                onPressed: () => print('북마크'))
-              ],
+                onPressed: () => print('북마크'),
+              ),
+            ],
           ),
-              CircleIconButton(
-                icon: Icons.nightlight_round,
-                onPressed: () => print('다크모드'),
+          CircleIconButton(
+            icon: Icons.nightlight_round,
+            onPressed: () => print('다크모드'),
           ),
         ],
       ),
@@ -98,18 +98,9 @@ class HomeScreen extends StatelessWidget {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: '',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
         ],
       ),
     );
@@ -188,10 +179,7 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
           child: Text(
             title,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
         ),
         SizedBox(
@@ -221,7 +209,6 @@ class HomeScreen extends StatelessWidget {
       ],
     );
   }
-  
-  
+
   void log(num num) {}
 }
