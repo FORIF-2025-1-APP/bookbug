@@ -12,7 +12,7 @@ class ProfileimageBase extends StatelessWidget {
     this.height = 100.0,
     this.width = 100.0, // 기본 값
     this.badge,
-  });
+  }); //ㄱ
 
   @override
   Widget build(BuildContext context) {

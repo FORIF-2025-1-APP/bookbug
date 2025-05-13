@@ -8,7 +8,7 @@ class PagetitleBase extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   const PagetitleBase({
-    super.key,
+    super.key, //ㄱ
     required this.title, // 필수 데이터
     this.fontsize = 20,
     this.color,
