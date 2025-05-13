@@ -15,7 +15,7 @@ class BookinfoBase extends StatelessWidget {
     required this.publisher,
     required this.pubDate,
     required this.review,
-    super.key
+    super.key,
   });
 
   @override
@@ -31,43 +31,39 @@ class BookinfoBase extends StatelessWidget {
           decoration: BoxDecoration(
             color: colorScheme.secondaryContainer,
             shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(
-              Radius.circular(20)
-            )
+            borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
-          child: Image(
-            image: imageProvider,
-            width: 74,
-            height: 104
-          ),
+          child: Image(image: imageProvider, width: 74, height: 104),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text(title,
-                style: theme.textTheme.headlineMedium)
+              child: Text(title, style: theme.textTheme.headlineMedium),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text(author,
-                style: theme.textTheme.bodyMedium)
+              child: Text(author, style: theme.textTheme.bodyMedium),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text('$publisher.$pubDate', 
+              child: Text(
+                '$publisher.$pubDate',
                 style: TextStyle(color: colorScheme.inversePrimary),
-                selectionColor: colorScheme.inversePrimary)
+                selectionColor: colorScheme.inversePrimary,
+              ),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text(review, 
+              child: Text(
+                review,
                 style: TextStyle(color: colorScheme.inversePrimary),
-                selectionColor: colorScheme.inversePrimary)
+                selectionColor: colorScheme.inversePrimary,
+              ),
             ),
           ],
-        )
+        ),
       ],
     );
   }

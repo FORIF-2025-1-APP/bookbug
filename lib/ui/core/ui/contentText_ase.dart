@@ -13,11 +13,11 @@ class ContentTextBase extends StatelessWidget {
     required this.label,
     this.autofocus = false,
     required this.controller,
-    super.key
+    super.key,
   });
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
     return SizedBox(
@@ -28,19 +28,16 @@ class ContentTextBase extends StatelessWidget {
           expands: true,
           maxLines: null,
           textAlignVertical: TextAlignVertical(y: -1),
-          autofocus:autofocus,
+          autofocus: autofocus,
           controller: controller,
           decoration: InputDecoration(
-    	      border: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: theme.primaryColor,
-                width: 1.0
-              )
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.primaryColor, width: 1.0),
             ),
-    	    labelText: label,
-          )
-        )
-      )
+            labelText: label,
+          ),
+        ),
+      ),
     );
   }
 }
