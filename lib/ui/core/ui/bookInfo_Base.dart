@@ -56,7 +56,7 @@ class BookinfoBase extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text(publisher + '.' + pubDate, 
+              child: Text('$publisher.$pubDate', 
                 style: TextStyle(color: colorScheme.inversePrimary),
                 selectionColor: colorScheme.inversePrimary)
             ),

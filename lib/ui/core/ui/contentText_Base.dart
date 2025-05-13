@@ -20,7 +20,7 @@ class ContentTextBase extends StatelessWidget {
   Widget build(BuildContext context){
     final ThemeData theme = Theme.of(context);
 
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
       child: Expanded(

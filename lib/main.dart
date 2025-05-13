@@ -83,7 +83,6 @@ class HomeScreen extends StatelessWidget {
               CircleIconButton(
                 icon: Icons.bookmark_border,
                 onPressed: () => print('북마크'),
-<<<<<<< HEAD
                 iconSize: 24,
                 iconColor: Colors.green[900],
               ),
@@ -94,14 +93,6 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () => print('다크모드'),
                 iconSize: 24,
                 iconColor: Colors.green[900],
-=======
-              ),
-            ],
-          ),
-          CircleIconButton(
-            icon: Icons.nightlight_round,
-            onPressed: () => print('다크모드'),
->>>>>>> 521d35ce38496907061dcb051b462100b763b6da
           ),
         ],
       ),
