@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './ui/core/themes/theme.dart';
 import 'ui/core/ui/bookcomponent_base.dart';
 import 'ui/core/ui/iconbutton_base.dart';
 
@@ -58,8 +59,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '책 리뷰 앱',
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: Colors.white,
+        colorScheme:
+            MediaQuery.platformBrightnessOf(context) == Brightness.dark
+                ? MaterialTheme.darkScheme().toColorScheme()
+                : MaterialTheme.lightScheme().toColorScheme(),
         fontFamily: 'Pretendard', // 한글 폰트
       ),
       home: const HomeScreen(),
