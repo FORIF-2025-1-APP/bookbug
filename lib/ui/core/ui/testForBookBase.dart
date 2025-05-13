@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import './bookInfo_Base.dart';
-import './contentText_Base.dart';
-import './tag_Base.dart';
+import './bookInfo_base.dart';
+import './contentText_base.dart';
+import './tag_base.dart';
 
 class Testforbookbase extends StatefulWidget{
   const Testforbookbase({super.key});
