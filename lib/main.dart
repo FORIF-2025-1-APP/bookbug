@@ -1,4 +1,3 @@
-import 'package:bookbug/wongyu_test.dart';
 import 'package:flutter/material.dart';
 import './ui/core/themes/theme.dart';
 
@@ -94,15 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const WongyuTest()),
-                );
-              },
-              child: const Text('go to page'),
-            ),
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
