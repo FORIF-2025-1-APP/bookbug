@@ -22,17 +22,23 @@ class ExampleScreen extends StatelessWidget {
               CircleIconButton(
                 icon: Icons.bookmark_border,
                 onPressed: () => print('북마크 버튼 클릭'),
+                iconSize: 24,
+                iconColor: Colors.green[900],
                 // 색상을 명시적으로 지정하지 않으면 테마 색상이 자동으로 적용됩니다
               ),
               CircleIconButton(
                 icon: Icons.nightlight_round,
                 onPressed: () => print('다크모드 버튼 클릭'),
+                iconSize: 24,
+                iconColor: Colors.green[900],
                 // 원하는 경우 개별 버튼에 커스텀 색상 적용 가능
                 backgroundColor: colorScheme.surfaceContainerHighest,
               ),
               CircleIconButton(
                 icon: Icons.logout,
                 onPressed: () => print('로그아웃 버튼 클릭'),
+                iconSize: 24,
+                iconColor: Colors.green[900],
               ),
             ],
           ),
@@ -77,12 +83,17 @@ class HomeScreen extends StatelessWidget {
             buttons: [
               CircleIconButton(
                 icon: Icons.bookmark_border,
-                onPressed: () => print('북마크'))
+                onPressed: () => print('북마크'),
+                iconSize: 24,
+                iconColor: Colors.green[900],
+              ),
               ],
           ),
               CircleIconButton(
                 icon: Icons.nightlight_round,
                 onPressed: () => print('다크모드'),
+                iconSize: 24,
+                iconColor: Colors.green[900],
           ),
         ],
       ),
