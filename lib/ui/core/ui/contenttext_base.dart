@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ContentTextBase extends StatelessWidget {
+class ContentTextbase extends StatelessWidget {
   final double height;
   final double width;
   final String label;
   final bool autofocus;
   final TextEditingController? controller;
 
-  const ContentTextBase({
+  const ContentTextbase({
     required this.height,
     this.width = 343,
     required this.label,
