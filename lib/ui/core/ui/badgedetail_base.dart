@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class BadgeDetailCard extends StatelessWidget {
-  final IconData icon; // 중앙 아이콘
-  final String title; // 뱃지 이름
-  final String subtitle; // 뱃지 설명
-  final VoidCallback onSetAsMain; // 대표 뱃지로 설정
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onSetAsMain;
 
   const BadgeDetailCard({
     super.key,
@@ -16,60 +16,51 @@ class BadgeDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // 아이콘 포함 박스
-        Container(
-          width: double.infinity,
-          margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-          padding: const EdgeInsets.symmetric(vertical: 48),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainer, // 전체 배경색
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Center(
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      height: 500,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Stack(
+        children: [
+          Center(
             child: Container(
               width: 56,
               height: 56,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.surfaceContainerHighest, // 아이콘 배경색
+                color: colorScheme.surfaceContainerHighest,
               ),
-              child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
+              child: Icon(icon, color: colorScheme.primary, size: 28),
             ),
           ),
-        ),
-        const SizedBox(height: 8),
-        // 제목
-        Text(
-          title,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 4),
-        // 서브 텍스트
-        Text( 
-          subtitle,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 24),
-        // 대표 뱃지 설정 버튼
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(48),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ],
             ),
-            onPressed: onSetAsMain,
-            child: const Text('대표 뱃지로 설정'),
-          ),
-        ),
-      ],
+          )
+        ],
+      ),
     );
   }
 }

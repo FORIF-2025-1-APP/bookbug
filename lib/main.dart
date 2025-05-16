@@ -1,3 +1,4 @@
+import 'package:bookbug/ui/lists/view_model/badge_list_page.dart';
 import 'package:flutter/material.dart';
 import './ui/core/themes/theme.dart';
 import 'ui/core/ui/bookcomponent_base.dart';
@@ -104,6 +105,23 @@ class HomeScreen extends StatelessWidget {
           _buildBookSection(context, '실시간 Top 10'),
           _buildBookSection(context, '실시간 Top 10'),
           _buildBookSection(context, '실시간 Top 10'),
+
+          const SizedBox(height: 24),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const BadgeListPage(),
+                  ),
+                );
+              }, 
+            child: const Text('뱃지 페이지로 이동'),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
