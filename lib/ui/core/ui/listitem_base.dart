@@ -53,42 +53,44 @@ class ListItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Text(
-                    nickname,
-                    style: Theme.of(context)
-                      .textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                  nickname,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(height: 2),
+                ),
+              Row(
+                children: [
                   Text(
-                    title,
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    trailingText,
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
-                  if (content.isNotEmpty) ... [
-                    const SizedBox(height: 2),
-                    Text(
-                      content,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
                 ],
               ),
+            ],
+          ),
+        const SizedBox(height: 2),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        if (content.isNotEmpty) ...[
+          const SizedBox(height: 2),
+          Text(
+            content,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(width: 8),
-            // 날짜, 더보기 아이콘
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  trailingText,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
-              ],
-            ),
+          ),
+        ],
+      ],
+    ),
+  ),
           ],
         ),
       ),
