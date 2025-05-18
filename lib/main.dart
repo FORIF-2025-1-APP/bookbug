@@ -87,18 +87,18 @@ class HomeScreen extends StatelessWidget {
           CircleIconButtonRow(
             buttons: [
               CircleIconButton(
-                icon: Icons.bookmark_border,
-                onPressed: () => print('북마크'),
+                icon: Icons.search,
+                onPressed: () => print('검색'),
                 iconSize: 24,
                 iconColor: Colors.green[900],
               ),
-              ],
-          ),
               CircleIconButton(
-                icon: Icons.nightlight_round,
-                onPressed: () => print('다크모드'),
+                icon: Icons.notifications,
+                onPressed: () => print('알림'),
                 iconSize: 24,
                 iconColor: Colors.green[900],
+              ),
+            ],
           ),
         ],
       ),
