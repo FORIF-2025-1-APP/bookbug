@@ -1,6 +1,6 @@
 import 'package:bookbug/ui/lists/view_model/badge_list_page.dart';
-import 'package:bookbug/ui/lists/view_model/search_page.dart';
-import 'package:bookbug/ui/lists/view_model/start_page.dart';
+import 'package:bookbug/ui/search/view_model/search_page.dart';
+import 'package:bookbug/ui/start/view_model/start_page.dart';
 import 'package:bookbug/ui/lists/view_model/wrote_list_page.dart';
 import 'package:flutter/material.dart';
 import './ui/core/themes/theme.dart';
