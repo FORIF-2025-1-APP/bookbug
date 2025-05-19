@@ -7,7 +7,7 @@ class ListItem extends StatelessWidget {
   final String? leadingText; // 이니셜 (프로필 사진 없는 경우)
   final String? leadingImageUrl; // 프로필 이미지 url
   final String trailingText; // 날짜/숫자
-  final VoidCallback? onTap; 
+  final VoidCallback? onTap;
 
   const ListItem({
     super.key,
@@ -25,29 +25,34 @@ class ListItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
           children: [
             // 프로필 (이미지 또는 이니셜)
             CircleAvatar(
               radius: 20,
-              backgroundColor: 
-                leadingImageUrl == null ? Theme.of(context).colorScheme.primaryContainer : null,
-              backgroundImage: leadingImageUrl != null
-                ? NetworkImage(leadingImageUrl!)
-                : null,
-              child: leadingImageUrl == null && leadingText != null
-                ? Text(
-                  leadingText!,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                  )
-                : null,
+              backgroundColor:
+                  leadingImageUrl == null
+                      ? Theme.of(context).colorScheme.primaryContainer
+                      : null,
+              backgroundImage:
+                  leadingImageUrl != null
+                      ? NetworkImage(leadingImageUrl!)
+                      : null,
+              child:
+                  leadingImageUrl == null && leadingText != null
+                      ? Text(
+                        leadingText!,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      )
+                      : null,
             ),
             const SizedBox(width: 12),
-            
+
             // 텍스트 영역 (닉네임, 제목, 댓글 내용)
             Expanded(
               child: Column(
@@ -55,17 +60,13 @@ class ListItem extends StatelessWidget {
                 children: [
                   Text(
                     nickname,
-                    style: Theme.of(context)
-                      .textTheme.labelSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  if (content.isNotEmpty) ... [
+                  Text(title, style: Theme.of(context).textTheme.bodyLarge),
+                  if (content.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
                       content,

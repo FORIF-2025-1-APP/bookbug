@@ -1,3 +1,4 @@
+import 'package:bookbug/ui/profile/view_model/profile.dart';
 import 'package:flutter/material.dart';
 import './ui/core/themes/theme.dart';
 import 'ui/core/ui/bookcomponent_base.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: '책 리뷰 앱',
       theme: ThemeData(
         colorScheme:
@@ -89,13 +91,13 @@ class HomeScreen extends StatelessWidget {
                 iconSize: 24,
                 iconColor: Colors.green[900],
               ),
-              ],
+            ],
           ),
-              CircleIconButton(
-                icon: Icons.nightlight_round,
-                onPressed: () => print('다크모드'),
-                iconSize: 24,
-                iconColor: Colors.green[900],
+          CircleIconButton(
+            icon: Icons.nightlight_round,
+            onPressed: () => print('다크모드'),
+            iconSize: 24,
+            iconColor: Colors.green[900],
           ),
         ],
       ),
@@ -106,6 +108,7 @@ class HomeScreen extends StatelessWidget {
           _buildBookSection(context, '실시간 Top 10'),
         ],
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xFFF5F5DC),
         selectedItemColor: Colors.black,
@@ -115,6 +118,14 @@ class HomeScreen extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Profile()),
+          );
+        },
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class ProfileimageBase extends StatelessWidget {
   final String image;
   final String? badge; // 프로필 좌측 상단 뱃지는 선택
+  final Icon? edit; // 프로필 수정 버튼
   final double width;
   final double height;
 
@@ -12,13 +13,14 @@ class ProfileimageBase extends StatelessWidget {
     this.height = 100.0,
     this.width = 100.0, // 기본 값
     this.badge,
-  }); //ㄱ
+    this.edit,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.center,
       clipBehavior: Clip.none, // 뱃지 위해 스택을 사용, 뱃지가 범위를 넘어가도 안짤리도록 함
-
       children: [
         Container(
           width: width,
@@ -41,6 +43,26 @@ class ProfileimageBase extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(2),
                 child: Image.asset(badge!, fit: BoxFit.contain),
+              ),
+            ),
+          ),
+        if (edit != null)
+          Positioned(
+            bottom: -2,
+            right: -2,
+            child: Container(
+              width: width * 0.3,
+              height: height * 0.3,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: Center(
+                child: IconButton(
+                  onPressed: () {},
+                  icon: edit!,
+                  padding: EdgeInsets.zero,
+                ),
               ),
             ),
           ),
