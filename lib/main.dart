@@ -1,4 +1,6 @@
 import 'package:bookbug/ui/lists/view_model/badge_list_page.dart';
+import 'package:bookbug/ui/lists/view_model/search_page.dart';
+import 'package:bookbug/ui/lists/view_model/start_page.dart';
 import 'package:bookbug/ui/lists/view_model/wrote_list_page.dart';
 import 'package:flutter/material.dart';
 import './ui/core/themes/theme.dart';
@@ -88,7 +90,12 @@ class HomeScreen extends StatelessWidget {
             buttons: [
               CircleIconButton(
                 icon: Icons.search,
-                onPressed: () => print('검색'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchPage()),
+                  );
+                },
                 iconSize: 24,
                 iconColor: Colors.green[900],
               ),
@@ -107,6 +114,22 @@ class HomeScreen extends StatelessWidget {
           _buildBookSection(context, '실시간 Top 10'),
           _buildBookSection(context, '실시간 Top 10'),
           _buildBookSection(context, '실시간 Top 10'),
+
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const StartPage(),
+                  ),
+                );
+              }, 
+            child: const Text('시작 빈 페이지'),
+            ),
+          ),
 
           const SizedBox(height: 24),
           Padding(
@@ -162,9 +185,9 @@ class HomeScreen extends StatelessWidget {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Review'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
@@ -263,7 +286,6 @@ class HomeScreen extends StatelessWidget {
                   imageUrl: book['imageUrl'],
                   onTap: () {
                     // 책 상세 페이지로 이동
-                    log('책 $index 선택됨' as num);
                   },
                 ),
               );
