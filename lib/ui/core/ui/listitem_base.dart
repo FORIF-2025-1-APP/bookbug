@@ -79,7 +79,9 @@ class ListItem extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
+                      if (trailingText.isNotEmpty) ...[
+                        const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
+                      ]
                     ],
                   ),
                 ],

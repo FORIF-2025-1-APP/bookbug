@@ -48,7 +48,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('알림'),
+        title: Text('알림 (${notifications.length})'),
         actions: [
           IconButton(
             onPressed: _markAllAsRead, 
