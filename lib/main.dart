@@ -1,4 +1,6 @@
 import 'package:bookbug/ui/lists/view_model/badge_list_page.dart';
+import 'package:bookbug/ui/lists/view_model/notifications_page.dart';
+import 'package:bookbug/ui/lists/view_model/toread_list_page.dart';
 import 'package:bookbug/ui/search/view_model/search_page.dart';
 import 'package:bookbug/ui/start/view_model/start_page.dart';
 import 'package:bookbug/ui/lists/view_model/wrote_list_page.dart';
@@ -101,7 +103,12 @@ class HomeScreen extends StatelessWidget {
               ),
               CircleIconButton(
                 icon: Icons.notifications,
-                onPressed: () => print('알림'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationsPage()),
+                  );
+                },
                 iconSize: 24,
                 iconColor: Colors.green[900],
               ),
@@ -176,6 +183,22 @@ class HomeScreen extends StatelessWidget {
                 );
               }, 
             child: const Text('작성한 리뷰'),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ToreadListPage(),
+                  ),
+                );
+              }, 
+            child: const Text('읽을 책 리스트'),
             ),
           ),
         ],
