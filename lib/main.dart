@@ -1,6 +1,7 @@
 import 'package:bookbug/ui/lists/view_model/badge_list_page.dart';
-import 'package:bookbug/ui/lists/view_model/search_page.dart';
-import 'package:bookbug/ui/lists/view_model/start_page.dart';
+import 'package:bookbug/ui/lists/view_model/notifications_page.dart';
+import 'package:bookbug/ui/search/view_model/search_page.dart';
+import 'package:bookbug/ui/start/view_model/start_page.dart';
 import 'package:bookbug/ui/lists/view_model/wrote_list_page.dart';
 import 'package:flutter/material.dart';
 import './ui/core/themes/theme.dart';
@@ -101,7 +102,12 @@ class HomeScreen extends StatelessWidget {
               ),
               CircleIconButton(
                 icon: Icons.notifications,
-                onPressed: () => print('알림'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationsPage()),
+                  );
+                },
                 iconSize: 24,
                 iconColor: Colors.green[900],
               ),
