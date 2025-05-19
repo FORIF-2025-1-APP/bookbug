@@ -31,7 +31,7 @@ class BookinfoBase extends StatelessWidget {
           decoration: BoxDecoration(
             color: colorScheme.secondaryContainer,
             shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
           child: Image(image: imageProvider, width: 74, height: 104),
         ),
@@ -40,17 +40,30 @@ class BookinfoBase extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text(title, style: theme.textTheme.headlineMedium),
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child:Text(title, style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.primaryContainer
+                ))
+              )
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text(author, style: theme.textTheme.bodyMedium),
+              child: Text(author, style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: colorScheme.inversePrimary)),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
               child: Text(
                 '$publisher.$pubDate',
-                style: TextStyle(color: colorScheme.inversePrimary),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: colorScheme.inversePrimary),
                 selectionColor: colorScheme.inversePrimary,
               ),
             ),
@@ -58,7 +71,10 @@ class BookinfoBase extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
               child: Text(
                 review,
-                style: TextStyle(color: colorScheme.inversePrimary),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: colorScheme.inversePrimary),
                 selectionColor: colorScheme.inversePrimary,
               ),
             ),

@@ -11,16 +11,17 @@ class TagBase extends StatelessWidget {
 
     ButtonStyle style = ElevatedButton.styleFrom(
       backgroundColor: colorScheme.inversePrimary,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      minimumSize: Size(10, 25),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
 
     return ButtonTheme(
-      minWidth: 32,
-      height: 32,
       child: ElevatedButton(
         onPressed: () {},
         style: style,
-        child: Text(tagName, style: theme.textTheme.bodySmall),
+        child: Text(tagName, style: TextStyle(
+          fontSize: 10,
+        )),
       ),
     );
   }
