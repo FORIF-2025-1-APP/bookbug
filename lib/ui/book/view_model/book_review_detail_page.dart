@@ -3,6 +3,8 @@ import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:bookbug/ui/core/ui/bookinfo_base.dart';
 import 'package:bookbug/ui/core/ui/tag_base.dart';
 import 'package:bookbug/ui/core/ui/profileimage_base.dart';
+import 'package:bookbug/ui/book/view_model/book_reply_list_page.dart';
+import 'package:bookbug/ui/book/view_model/book_reply_detail_page.dart';
 
 class BookReviewDetailPage extends StatefulWidget{
   const BookReviewDetailPage({super.key});
@@ -145,14 +147,28 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage>{
                 leadingText: reply['leadingText'],
                 leadingImageUrl: reply['leadingImageUrl'],
                 trailingText: reply['trailingText'] ?? '',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BookReplyDetailPage(),
+                    ),
+                  );
+                },
               );
             },
           ),
           SizedBox(
             height: 40,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookReplyListPage(),
+                  ),
+                );
+              },
               child: Row(
                 children: [Text('더보기'), Spacer(), Icon(Icons.arrow_forward)],
               ),

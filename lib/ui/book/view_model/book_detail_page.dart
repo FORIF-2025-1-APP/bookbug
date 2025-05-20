@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:bookbug/ui/core/ui/tag_base.dart';
+import 'package:bookbug/ui/book/view_model/book_review_list_page.dart';
+import 'package:bookbug/ui/book/view_model/book_review_detail_page.dart';
 
 class BookDetailPage extends StatefulWidget{
   const BookDetailPage({super.key});
@@ -144,14 +146,28 @@ class _BookDetailPageState extends State<BookDetailPage>{
                 leadingText: review['leadingText'],
                 leadingImageUrl: review['leadingImageUrl'],
                 trailingText: review['trailingText'] ?? '',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BookReviewDetailPage(),
+                    ),
+                  );
+                },
               );
             },
           ),
           SizedBox(
             height: 40,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookReviewListPage(),
+                  ),
+                );
+              },
               child: Row(
                 children: [Text('더보기'), Spacer(), Icon(Icons.arrow_forward)],
               ),

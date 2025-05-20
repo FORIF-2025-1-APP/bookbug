@@ -1,5 +1,6 @@
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:flutter/material.dart';
+import 'package:bookbug/ui/book/view_model/book_reply_detail_page.dart';
 
 class BookReplyListPage extends StatefulWidget {
   const BookReplyListPage({super.key});
@@ -45,7 +46,12 @@ class _BookReplyListPageState extends State<BookReplyListPage> {
                   trailingText: review['date']!,
                   leadingText: review['nickname']![0].toUpperCase(),
                   onTap: () {
-                    // 댓글 상세 페이지 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BookReplyDetailPage(),
+                      ),
+                    );
                   },
                 );
               },
