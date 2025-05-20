@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 class ContentTextbase extends StatelessWidget {
   final double height;
-  final double width;
   final String label;
   final bool autofocus;
   final TextEditingController? controller;
 
-  const ContentTextbase({
-    required this.height,
-    this.width = 343,
+  const ContentTextBase({
+    this.height = 56,
     required this.label,
     this.autofocus = false,
     required this.controller,
@@ -18,24 +16,24 @@ class ContentTextbase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
+    final theme = Theme.of(context);
 
     return SizedBox(
-      width: width,
       height: height,
-      child: Expanded(
-        child: TextField(
-          expands: true,
-          maxLines: null,
-          textAlignVertical: TextAlignVertical(y: -1),
-          autofocus: autofocus,
-          controller: controller,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.primaryColor, width: 1.0),
-            ),
-            labelText: label,
+      width: double.infinity,
+      child: TextField(
+        expands: true,
+        maxLines: null,
+        minLines: null,
+        autofocus: autofocus,
+        controller: controller,
+        textAlignVertical: TextAlignVertical(y: -1),
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.all(12),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: theme.primaryColor, width: 1.0),
           ),
+          labelText: label,
         ),
       ),
     );

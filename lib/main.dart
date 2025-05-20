@@ -10,6 +10,12 @@ import './ui/core/themes/theme.dart';
 import 'ui/core/ui/bookcomponent_base.dart';
 import 'ui/core/ui/iconbutton_base.dart';
 import 'package:bookbug/ui/lists/view_model/linked_list_page.dart';
+import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
+import 'package:bookbug/ui/book/view_model/book_reply_detail_page.dart';
+import 'package:bookbug/ui/book/view_model/book_reply_list_page.dart';
+import 'package:bookbug/ui/book/view_model/book_review_detail_page.dart';
+import 'package:bookbug/ui/book/view_model/book_review_list_page.dart';
+import 'package:bookbug/ui/book/view_model/review_write_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -312,7 +318,10 @@ class HomeScreen extends StatelessWidget {
                   rating: book['rating'],
                   imageUrl: book['imageUrl'],
                   onTap: () {
-                    // 책 상세 페이지로 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => BookDetailPage()),
+                    );
                   },
                 ),
               );
