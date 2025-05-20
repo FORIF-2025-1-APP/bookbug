@@ -40,7 +40,9 @@ class Profile extends StatelessWidget {
                   icon: Icons.logout,
                   size: 40,
                   iconSize: 20,
-                  onPressed: () {},
+                  onPressed: () {
+                    logout(context);
+                  },
                 ),
               ],
             ),
@@ -248,4 +250,25 @@ class Profile extends StatelessWidget {
       ),
     );
   }
+}
+
+void logout(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("로그아웃 하시겠어요?"),
+        content: Text("떠나신다니 슬퍼요.. 안 가면 안돼요?"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("취소"),
+          ),
+          TextButton(onPressed: () {}, child: Text("로그아웃")),
+        ],
+      );
+    },
+  );
 }
