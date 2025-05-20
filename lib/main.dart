@@ -11,6 +11,7 @@ import 'ui/core/ui/bookcomponent_base.dart';
 import 'ui/core/ui/iconbutton_base.dart';
 import 'package:bookbug/ui/lists/view_model/linked_list_page.dart';
 import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
+import 'package:bookbug/ui/login/view_model/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -210,14 +211,33 @@ class HomeScreen extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Profile()),
-          );
-        },
-      ),
+            floatingActionButton: Column(
+  mainAxisSize: MainAxisSize.min,
+  crossAxisAlignment: CrossAxisAlignment.end,
+  children: [
+    FloatingActionButton(
+      heroTag: 'profile',
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Profile()),
+        );
+      },
+      child: const Icon(Icons.person),
+    ),
+    const SizedBox(height: 12),
+    FloatingActionButton(
+      heroTag: 'login',
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      },
+      child: const Icon(Icons.login),
+    ),
+  ],
+),
     );
   }
 
