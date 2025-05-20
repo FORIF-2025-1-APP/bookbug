@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:bookbug/ui/core/ui/profileimage_Base.dart';
 import 'package:bookbug/ui/core/ui/bookcomponent_base.dart';
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
-import 'package:bookbug/ui/profile/view_model/profile_edit.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
