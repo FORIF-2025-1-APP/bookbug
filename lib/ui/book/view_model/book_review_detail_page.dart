@@ -5,6 +5,7 @@ import 'package:bookbug/ui/core/ui/tag_base.dart';
 import 'package:bookbug/ui/core/ui/profileimage_base.dart';
 import 'package:bookbug/ui/book/view_model/book_reply_list_page.dart';
 import 'package:bookbug/ui/book/view_model/book_reply_detail_page.dart';
+import 'package:bookbug/ui/book/view_model/review_write_page.dart';
 
 class BookReviewDetailPage extends StatefulWidget{
   const BookReviewDetailPage({super.key});
@@ -16,6 +17,12 @@ class BookReviewDetailPage extends StatefulWidget{
 class _BookReviewDetailPageState extends State<BookReviewDetailPage>{
 
   void _editReview(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReviewWritePage(),
+      ),
+    );
     // DB 연결 시 추가 예정
   }
 
