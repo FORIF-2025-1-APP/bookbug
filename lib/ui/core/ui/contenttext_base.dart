@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ContentTextbase extends StatelessWidget {
+class ContentTextBase extends StatelessWidget {
   final double height;
   final String label;
   final bool autofocus;
