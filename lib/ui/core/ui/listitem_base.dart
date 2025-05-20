@@ -35,30 +35,6 @@ class ListItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 프로필 (이미지 또는 이니셜)
-            CircleAvatar(
-              radius: 20,
-              backgroundColor:
-                  leadingImageUrl == null
-                      ? Theme.of(context).colorScheme.primaryContainer
-                      : null,
-              backgroundImage:
-                  leadingImageUrl != null
-                      ? NetworkImage(leadingImageUrl!)
-                      : null,
-              child:
-                  leadingImageUrl == null && leadingText != null
-                      ? Text(
-                        leadingText!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
-                        ),
-                      )
-                      : null,
-            ),
-            const SizedBox(width: 12),
-
             if (leadingText != null || leadingImageUrl != null)
               CircleAvatar(
                 radius: 20,
@@ -92,24 +68,6 @@ class ListItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    nickname,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(title, style: Theme.of(context).textTheme.bodyLarge),
-                  if (content.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      content,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
