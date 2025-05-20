@@ -1,8 +1,15 @@
 import 'package:bookbug/ui/profile/view_model/profile.dart';
+import 'package:bookbug/ui/lists/view_model/badge_list_page.dart';
+import 'package:bookbug/ui/lists/view_model/notifications_page.dart';
+import 'package:bookbug/ui/lists/view_model/toread_list_page.dart';
+import 'package:bookbug/ui/search/view_model/search_page.dart';
+import 'package:bookbug/ui/start/view_model/start_page.dart';
+import 'package:bookbug/ui/lists/view_model/wrote_list_page.dart';
 import 'package:flutter/material.dart';
 import './ui/core/themes/theme.dart';
 import 'ui/core/ui/bookcomponent_base.dart';
 import 'ui/core/ui/iconbutton_base.dart';
+import 'package:bookbug/ui/lists/view_model/linked_list_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -86,8 +93,13 @@ class HomeScreen extends StatelessWidget {
           CircleIconButtonRow(
             buttons: [
               CircleIconButton(
-                icon: Icons.bookmark_border,
-                onPressed: () => print('북마크'),
+                icon: Icons.search,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchPage()),
+                  );
+                },
                 iconSize: 24,
                 iconColor: Colors.green[900],
               ),
@@ -99,6 +111,18 @@ class HomeScreen extends StatelessWidget {
             iconSize: 24,
             iconColor: Colors.green[900],
           ),
+
+          CircleIconButton(
+            icon: Icons.notifications,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationsPage()),
+              );
+            },
+            iconSize: 24,
+            iconColor: Colors.green[900],
+          ),
         ],
       ),
       body: ListView(
@@ -106,6 +130,76 @@ class HomeScreen extends StatelessWidget {
           _buildBookSection(context, '실시간 Top 10'),
           _buildBookSection(context, '실시간 Top 10'),
           _buildBookSection(context, '실시간 Top 10'),
+
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const StartPage()),
+                );
+              },
+              child: const Text('시작 빈 페이지'),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BadgeListPage()),
+                );
+              },
+              child: const Text('뱃지 페이지'),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LinkedListPage()),
+                );
+              },
+              child: const Text('좋아요한 리뷰'),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const WroteListPage()),
+                );
+              },
+              child: const Text('작성한 리뷰'),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ToreadListPage()),
+                );
+              },
+              child: const Text('읽을 책 리스트'),
+            ),
+          ),
         ],
       ),
 
@@ -114,9 +208,9 @@ class HomeScreen extends StatelessWidget {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.bookmark), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Review'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -223,7 +317,6 @@ class HomeScreen extends StatelessWidget {
                   imageUrl: book['imageUrl'],
                   onTap: () {
                     // 책 상세 페이지로 이동
-                    log('책 $index 선택됨' as num);
                   },
                 ),
               );
