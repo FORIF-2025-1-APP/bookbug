@@ -103,25 +103,21 @@ class HomeScreen extends StatelessWidget {
                 iconSize: 24,
                 iconColor: Colors.green[900],
               ),
-            ],
-          ),
-          CircleIconButton(
-            icon: Icons.nightlight_round,
-            onPressed: () => print('다크모드'),
-            iconSize: 24,
-            iconColor: Colors.green[900],
-          ),
 
-          CircleIconButton(
-            icon: Icons.notifications,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NotificationsPage()),
-              );
-            },
-            iconSize: 24,
-            iconColor: Colors.green[900],
+              CircleIconButton(
+                icon: Icons.notifications,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotificationsPage(),
+                    ),
+                  );
+                },
+                iconSize: 24,
+                iconColor: Colors.green[900],
+              ),
+            ],
           ),
         ],
       ),
