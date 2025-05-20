@@ -1,5 +1,6 @@
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:flutter/material.dart';
+import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
 
 class ToreadListPage extends StatelessWidget {
   const ToreadListPage({super.key});
@@ -28,7 +29,12 @@ class ToreadListPage extends StatelessWidget {
             trailingText: '',
             leadingText: null,
             leadingImageUrl: null,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BookDetailPage()),
+              );
+            },
             contentWidget: const SizedBox.shrink(),
             titleWidget: Text(
               book['title']!,
