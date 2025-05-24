@@ -82,7 +82,14 @@ class Profile extends StatelessWidget {
               Center(
                 child: Row(
                   children: [
-                    Expanded(child: booksection(context, '최애 책')),
+                    Expanded(
+                      child: BookCard(
+                        title: "title",
+                        author: "author",
+                        rating: 5,
+                        imageUrl: 'imageUrl',
+                      ),
+                    ),
                     Expanded(child: badgesection(context, '뱃지(0)')),
                   ],
                 ),
