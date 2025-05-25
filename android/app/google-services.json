@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "17339111641",
+    "project_id": "bookbug-eb5c5",
+    "storage_bucket": "bookbug-eb5c5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:17339111641:android:bd011966bd249afb5ac6c8",
+        "android_client_info": {
+          "package_name": "com.example.bookbug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKJ1T2k42tHfx2YWOU6fXNXeZq-iA74LE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
