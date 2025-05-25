@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:bookbug/ui/core/ui/input_base.dart';
 import 'package:bookbug/ui/core/ui/button_base.dart';
 import 'package:bookbug/ui/core/ui/checkbox_base.dart';
@@ -29,10 +32,66 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  Future<void> register() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+    final confirmPassword = confirmPasswordController.text;
+    final username = usernameController.text.trim();
+
+    if (!terms1 || !terms2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('약관에 모두 동의해야 합니다.')),
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('비밀번호가 일치하지 않습니다.')),
+      );
+      return;
+    }
+
+    final url = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/auth/register');
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'username': username,
+      }),
+    );
+
+    if (!mounted) return;
+
+    if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('회원가입 성공! 로그인 페이지로 이동합니다.')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+    } else if (response.statusCode == 409) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('이미 존재하는 이메일입니다.')),
+      );
+    } else if (response.statusCode == 400) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('입력값을 확인해주세요.')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('회원가입 실패: ${response.statusCode}')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    const textColor = Colors.black;
 
     return Scaffold(
       appBar: AppBar(
@@ -80,7 +139,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 controller: usernameController,
               ),
               const SizedBox(height: 24),
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -102,7 +160,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(height: 12),
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -124,15 +181,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(height: 24),
-
               ButtonBase(
                 text: '회원가입',
-                onPressed: () {
-                  print('email: ${emailController.text}');
-                  print('password: ${passwordController.text}');
-                  print('username: ${usernameController.text}');
-                  print('terms1: $terms1 / terms2: $terms2');
-                },
+                onPressed: register,
               ),
             ],
           ),
