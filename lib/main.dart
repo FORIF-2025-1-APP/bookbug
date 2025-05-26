@@ -1,3 +1,4 @@
+import 'package:bookbug/ui/homepage/view_model/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bookbug/ui/login/view_model/login_page.dart';
 import 'package:bookbug/ui/core/themes/theme.dart';

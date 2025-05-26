@@ -16,6 +16,15 @@ class BookCard extends StatelessWidget {
     this.onTap,
   });
 
+  factory BookCard.fromJson(Map<String, dynamic> json) {
+    return BookCard(
+      title: json['title'] ?? '제목 없음',
+      author: json['author'] ?? '작자 미상',
+      rating: (json['rating'] ?? 0).toDouble(),
+      imageUrl: json['imageUrl'] ?? 'https://via.placeholder.com/150x200',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
