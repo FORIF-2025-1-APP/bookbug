@@ -21,6 +21,20 @@ class _HomePageState extends State<HomePage> {
     late Future<List<BookCard>> booksFuture;
     int _selectedIndex = 0;
 
+    void _onItemTapped(int index) {
+      if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ReviewWritePage()),
+        );
+        return;
+      }
+
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+
     @override
     void initState() {
         super.initState();
@@ -90,8 +104,6 @@ class _HomePageState extends State<HomePage> {
                 _buildBookSection('월간 Top 10'),
             ],
         );
-        case 1:
-        return const ReviewWritePage();
         case 2:
         return const Profile();
         default:
@@ -161,7 +173,7 @@ class _HomePageState extends State<HomePage> {
             body: _buildBody(),
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: _selectedIndex,
-                onTap: (index) => setState(() => _selectedIndex = index),
+                onTap: _onItemTapped,
                 backgroundColor: const Color(0xFFF5F5DC),
                 selectedItemColor: Colors.black,
                 unselectedItemColor: Colors.grey,

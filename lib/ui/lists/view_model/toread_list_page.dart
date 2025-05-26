@@ -60,7 +60,7 @@ class _ToreadListPageState extends State<ToreadListPage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => BookDetailPage(bookId: book.id)),
+                      MaterialPageRoute(builder: (context) => BookDetailPage(bookId: (book.id).toString())),
                     );
                   },
                   contentWidget: const SizedBox.shrink(),
