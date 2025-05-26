@@ -18,6 +18,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  void _onItemTapped(int index) {
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ReviewWritePage()),
+      );
+      return;
+    }
+
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   PreferredSizeWidget? _buildAppBar() {
     switch (_selectedIndex) {
       case 0:
@@ -68,8 +82,6 @@ class _HomePageState extends State<HomePage> {
             _buildBookSection('월간 Top 10'),
           ],
         );
-      case 1:
-        return const ReviewWritePage();
       case 2:
         return const Profile();
       default:
@@ -113,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BookDetailPage(),
+                      builder: (context) => BookDetailPage(bookId: book['id']),
                     ),
                   ),
                 ),
@@ -132,7 +144,7 @@ class _HomePageState extends State<HomePage> {
       body: _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
+        onTap: _onItemTapped,
         backgroundColor: const Color(0xFFF5F5DC),
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,

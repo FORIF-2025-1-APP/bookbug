@@ -39,7 +39,7 @@ class  WroteListPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BookReviewDetailPage(),
+                        builder: (context) => BookReviewDetailPage(bookId: ,reviewId: review['id'],),
                       ),
                     );
                   },

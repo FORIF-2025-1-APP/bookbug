@@ -32,7 +32,7 @@ class ToreadListPage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BookDetailPage()),
+                MaterialPageRoute(builder: (context) => BookDetailPage(bookId: book[id],)),
               );
             },
             contentWidget: const SizedBox.shrink(),
