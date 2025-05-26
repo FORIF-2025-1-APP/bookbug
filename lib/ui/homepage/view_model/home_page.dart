@@ -7,7 +7,6 @@ import 'package:bookbug/ui/core/ui/bookcomponent_base.dart';
 import 'package:bookbug/ui/core/ui/iconbutton_base.dart';
 import 'package:bookbug/ui/lists/view_model/notifications_page.dart';
 import 'package:bookbug/ui/search/view_model/search_page.dart';
-import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,74 +18,44 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-
-  final List<Map<String, dynamic>> books = List.generate(10, (_) => {
-        'title': 'Book Title',
-        'author': 'Author',
-        'rating': 4.0,
-        'imageUrl': 'https://via.placeholder.com/150x200',
-      });
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-        appBar: AppBar(
+  PreferredSizeWidget? _buildAppBar() {
+    switch (_selectedIndex) {
+      case 0:
+        return AppBar(
           title: const Text('Home'),
           actions: [
             Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: CircleIconButton(
-                icon: Icons.search,
-                onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SearchPage()),
-                ),
-                iconSize: 24,
-                iconColor: Colors.green[900],
+              icon: Icons.search,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage()),
+              ),
+              iconSize: 24,
+              iconColor: Colors.green[900],
                 ),
             ),
             Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: CircleIconButton(
-                icon: Icons.notifications,
-                onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              icon: Icons.notifications,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              ),
+              iconSize: 24,
+              iconColor: Colors.green[900],
                 ),
-                iconSize: 24,
-                iconColor: Colors.green[900],
-                ),
             ),
+
           ],
-        ),
-        body: _buildBody(),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          backgroundColor: const Color(0xFFF5F5DC),
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.grey,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bookmark),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add),
-              label: 'Review',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
-        ),
-      );
+        );
+      case 1:
+        return null;
+      case 2:
+        return null;
+      default:
+        return AppBar(title: const Text('오류'));
+    }
   }
 
   Widget _buildBody() {
@@ -109,6 +78,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBookSection(String title) {
+    final List<Map<String, dynamic>> books = List.generate(10, (_) => {
+      'title': 'Book Title',
+      'author': 'Author',
+      'rating': 4.0,
+      'imageUrl': 'https://via.placeholder.com/150x200',
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -146,6 +122,35 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: _buildBody(),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        backgroundColor: const Color(0xFFF5F5DC),
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'Review',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      ),
     );
   }
 }
