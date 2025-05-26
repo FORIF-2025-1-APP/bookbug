@@ -11,7 +11,11 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter:
     sdk: flutter
+
+  image_picker: ^1.1.2
+
   shared_preferences: ^2.2.2
+
 
   cupertino_icons: ^1.0.8
 

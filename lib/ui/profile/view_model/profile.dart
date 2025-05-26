@@ -81,16 +81,10 @@ class Profile extends StatelessWidget {
                 ),
               ),
               Center(
-                child: Row(
+                child: Flex(
+                  direction: Axis.horizontal,
                   children: [
-                    Expanded(
-                      child: BookCard(
-                        title: "title",
-                        author: "author",
-                        rating: 5,
-                        imageUrl: 'imageUrl',
-                      ),
-                    ),
+                    Expanded(child: booksection(context, '최애 책')),
                     Expanded(child: badgesection(context, '뱃지(0)')),
                   ],
                 ),
@@ -186,7 +180,9 @@ class Profile extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const BadgeListPage(),
+
+                            builder: (builder) => BadgeListPage(),
+
                           ),
                         );
                       },

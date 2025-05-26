@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class ProfileimageBase extends StatelessWidget {
   final String image;
   final String? badge; // 프로필 좌측 상단 뱃지는 선택
-  final Icon? edit; // 프로필 수정 버튼
+  final Widget? edit; // 프로필 수정 버튼
+  final VoidCallback? onTapEdit;
   final double width;
   final double height;
 
@@ -14,6 +15,7 @@ class ProfileimageBase extends StatelessWidget {
     this.width = 100.0, // 기본 값
     this.badge,
     this.edit,
+    this.onTapEdit,
   });
 
   @override
@@ -50,19 +52,15 @@ class ProfileimageBase extends StatelessWidget {
           Positioned(
             bottom: -2,
             right: -2,
-            child: Container(
-              width: width * 0.3,
-              height: height * 0.3,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              child: Center(
-                child: IconButton(
-                  onPressed: () {},
-                  icon: edit!,
-                  padding: EdgeInsets.zero,
+            child: GestureDetector(
+              onTap: onTapEdit,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.inversePrimary,
                 ),
+                padding: EdgeInsets.all(6),
+                child: edit ?? Icon(Icons.edit, color: Colors.white, size: 18),
               ),
             ),
           ),
