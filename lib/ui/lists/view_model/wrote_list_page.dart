@@ -1,51 +1,86 @@
-import 'package:bookbug/ui/lists/widgets/empty_review_message.dart';
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:flutter/material.dart';
 import 'package:bookbug/ui/book/view_model/book_review_detail_page.dart';
+import 'package:bookbug/data/model/review_model.dart';
+import 'package:bookbug/data/services/api_service.dart';
 
-class  WroteListPage extends StatelessWidget {
-  const WroteListPage ({super.key});
+class WroteListPage extends StatefulWidget {
+  const WroteListPage({super.key});
+
+  @override
+  State<WroteListPage> createState() => _WroteListPageState();
+}
+
+class _WroteListPageState extends State<WroteListPage> {
+  Future<List<Review>>? _myReviewsFuture;
+  int reviewCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _myReviewsFuture = ApiService.getMyReviews().then((list) {
+      setState(() {
+        reviewCount = list.length;
+      });
+      return list;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> myReviews = List.generate(10, (index) => {
-      'nickname': 'me',
-      'bookTitle': 'List Item $index',
-      'reviewPreview': 'Supporting the text for item $index',
-      'date': '2025.05.${(index + 1).toString().padLeft(2, '0')}'
-    });
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text('작성한 리뷰', style: Theme.of(context).textTheme.titleLarge),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          color: colorScheme.onSurface,
           onPressed: () => Navigator.of(context).pop(),
         ),
+        title: Text(
+          '내가 쓴 리뷰 ($reviewCount)',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: colorScheme.onSurface,
+              ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: myReviews.isEmpty
-          ? const EmptyReviewMessage(message: '작성한 리뷰가 아직 없어요')
-          : ListView.builder(
-              itemCount: myReviews.length,
+      body: FutureBuilder<List<Review>>(
+        future: _myReviewsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('에러: ${snapshot.error}'));
+          } else {
+            final reviews = snapshot.data!;
+            return ListView.builder(
+              itemCount: reviews.length,
               itemBuilder: (context, index) {
-                final review = myReviews[index];
+                final review = reviews[index];
                 return ListItem(
-                  nickname: review['nickname']!,
-                  title: review['bookTitle']!,
-                  content: review['reviewPreview']!,
-                  trailingText: review['date']!,
-                  leadingText: review['nickname']![0].toUpperCase(),
+                  nickname: review.nickname,
+                  title: review.bookTitle,
+                  content: review.reviewPreview,
+                  leadingText: review.nickname.substring(0, 1).toUpperCase(),
+                  trailingText: review.createdAt.substring(0, 10),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BookReviewDetailPage(),
+                        builder: (_) => BookReviewDetailPage(reviewId: review.id, bookId: review.bookId),
                       ),
                     );
                   },
                 );
               },
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }
