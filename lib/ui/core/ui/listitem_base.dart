@@ -76,9 +76,9 @@ class ListItem extends StatelessWidget {
                           ),
                           if (customTrailing != null)
                             customTrailing!
-                          else if (trailingText != null)
+                          else 
                             Text(
-                              trailingText!,
+                              trailingText,
                               style: textTheme.labelMedium?.copyWith(
                                 color: colorScheme.outline,
                               ),
@@ -87,26 +87,22 @@ class ListItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       titleWidget ??
-                          (title != null
-                              ? Text(
-                                  title!,
+                           Text(
+                                  title,
                                   style: textTheme.bodyLarge?.copyWith(
                                     color: colorScheme.onSurface,
                                   ),
-                                )
-                              : const SizedBox()),
+                                ),
                       const SizedBox(height: 2),
                       contentWidget ??
-                          (content != null
-                              ? Text(
-                                  content!,
+                                Text(
+                                  content,
                                   style: textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.outline,
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                )
-                              : const SizedBox()),
+                                ),
                     ],
                   ),
                 )

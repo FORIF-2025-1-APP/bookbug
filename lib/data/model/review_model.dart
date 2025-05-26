@@ -1,5 +1,6 @@
 class Review {
   final int id;
+  final int bookId;
   final String nickname;
   final String bookTitle;
   final String reviewPreview;
@@ -9,6 +10,7 @@ class Review {
 
   Review({
     required this.id,
+    required this.bookId,
     required this.nickname,
     required this.bookTitle,
     required this.reviewPreview,
@@ -20,6 +22,7 @@ class Review {
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
       id: json['id'], 
+      bookId: json['book_id'] ?? 0,
       nickname: json['nickname'] ?? '', 
       bookTitle: json['bookTitle'] ?? '', 
       reviewPreview: json['reviewPreview'] ?? '', 
