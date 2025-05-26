@@ -8,7 +8,8 @@ class ListItem extends StatelessWidget {
   final String? leadingImageUrl; // 프로필 이미지 url
   final String trailingText; // 날짜/숫자
   final VoidCallback? onTap;
-
+  
+  final Widget? customTrailing;
   final Widget? titleWidget;
   final Widget? contentWidget;
 
@@ -23,103 +24,90 @@ class ListItem extends StatelessWidget {
     this.onTap,
     this.titleWidget,
     this.contentWidget,
+    this.customTrailing,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 프로필 (이미지 또는 이니셜)
-            if (leadingText != null || leadingImageUrl != null)
-              CircleAvatar(
-                radius: 20,
-                backgroundColor:
-                    leadingImageUrl == null
-                        ? Theme.of(context).colorScheme.primaryContainer
-                        : null,
-                backgroundImage:
-                    leadingImageUrl != null
-                        ? NetworkImage(leadingImageUrl!)
-                        : null,
-                child:
-                    leadingImageUrl == null && leadingText != null
-                        ? Text(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: leadingImageUrl == null
+                      ? colorScheme.primaryContainer
+                      : null,
+                  backgroundImage: leadingImageUrl != null
+                      ? NetworkImage(leadingImageUrl!)
+                      : null,
+                  child: leadingImageUrl == null && leadingText != null
+                      ? Text(
                           leadingText!,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryContainer,
+                          style: textTheme.labelLarge?.copyWith(
+                            color: colorScheme.onPrimaryContainer,
                           ),
                         )
-                        : null,
-              ),
-            if (leadingText != null || leadingImageUrl != null)
-              const SizedBox(width: 12),
-
-            // 텍스트 영역 (닉네임, 제목, 댓글 내용)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (nickname.isNotEmpty)
-                        Text(
-                          nickname,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.labelSmall?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            trailingText,
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          const SizedBox(width: 4),
-                          if (trailingText.isNotEmpty) ...[
-                            const Icon(
-                              Icons.chevron_right,
-                              size: 20,
-                              color: Colors.grey,
+                            nickname,
+                            style: textTheme.labelLarge?.copyWith(
+                              color: colorScheme.onSurface,
                             ),
-                          ],
+                          ),
+                          if (customTrailing != null)
+                            customTrailing!
+                          else 
+                            Text(
+                              trailingText,
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.outline,
+                              ),
+                            ),
                         ],
                       ),
+                      const SizedBox(height: 4),
+                      titleWidget ??
+                           Text(
+                                  title,
+                                  style: textTheme.bodyLarge?.copyWith(
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                      const SizedBox(height: 2),
+                      contentWidget ??
+                                Text(
+                                  content,
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.outline,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                     ],
                   ),
-                  const SizedBox(height: 2),
-                  if (titleWidget != null)
-                    titleWidget!
-                  else
-                    Text(title, style: Theme.of(context).textTheme.bodyLarge),
-                  if ((contentWidget != null) || content.isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    contentWidget ??
-                        Text(
-                          content,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                  ],
-                ],
-              ),
-            ),
+                )
+              ],
+            )
           ],
         ),
       ),

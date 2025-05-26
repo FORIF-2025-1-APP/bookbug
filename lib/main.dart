@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:bookbug/ui/homepage/view_model/home_page.dart';
+import 'package:flutter/material.dart';
+import 'package:bookbug/ui/login/view_model/login_page.dart';
 import 'package:bookbug/ui/core/themes/theme.dart';
 
 void main() {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
                 : MaterialTheme.lightScheme().toColorScheme(),
         fontFamily: 'Pretendard', // 한글 폰트
       ),
-      home: const HomePage(),
+      home: const LoginPage(),
     );
   }
 }

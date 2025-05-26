@@ -180,7 +180,9 @@ class Profile extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
+
                             builder: (builder) => BadgeListPage(),
+
                           ),
                         );
                       },

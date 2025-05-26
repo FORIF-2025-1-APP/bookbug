@@ -1,7 +1,8 @@
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:bookbug/ui/core/ui/popup_base.dart';
 import 'package:flutter/material.dart';
-
+import 'package:bookbug/data/services/api_service.dart';
+import 'package:bookbug/data/model/notification_model.dart';
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
 
@@ -10,36 +11,78 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  List<Map<String, dynamic>> notifications = List.generate(12, (index) => {
-    'title': 'List Item $index',
-    'content' : 'Supporting the text for item $index',
-    'date' : '${index + 1}시간 전',
-    'isRead': index % 3 == 0,
-  });
+  Future<List<NotificationItem>>? _notificationsFuture;
+  int notificationCount = 0;
 
-  void _markAllAsRead() {
-    setState(() {
-      for (var n in notifications) {
-        n['isRead'] = true;
-      }
+  @override
+  void initState() {
+    super.initState();
+    _refreshNotifications();
+  }
+
+  void _refreshNotifications() {
+    _notificationsFuture = ApiService.getNotifications().then((list) {
+      setState(() {
+        notificationCount = list.length;
+      });
+      return list;
     });
   }
 
-  void _deleteAll() {
+  Future<void> _handleNotificationTap(int id) async {
+    showDialog(
+      context: context,
+      builder: (context) => PopUpCard(
+        title: '알림 확인',
+        description: '이 알림을 읽음 처리할까요?',
+        leftButtonText: '네',
+        rightButtonText: '아니오',
+        onRightPressed: () => Navigator.of(context).pop(),
+        onLeftPressed: () async {
+          Navigator.of(context).pop();
+          await ApiService.markNotificationRead(id);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('읽음 처리 완료')),
+            );
+            setState(() => _notificationsFuture = ApiService.getNotifications());
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> _markAllRead() async {
     showDialog(
       context: context, 
-      builder: (_) => PopUpCard(
+      builder: (context) => PopUpCard(
+        title: '모두 읽기', 
+        description: '모든 알림을 읽음 처리할까요?',
+        leftButtonText: '네', 
+        rightButtonText: '아니오',
+        onLeftPressed: () async {
+          Navigator.of(context).pop();
+          await ApiService.markAllNotificationsRead();
+          if (mounted) _refreshNotifications();
+        }, 
+        onRightPressed: () => Navigator.of(context).pop(),
+      ));
+  }
+
+  Future<void> _deleteAll() async {
+    showDialog(
+      context: context, 
+      builder: (context) => PopUpCard(
         title: '알림을 모두 지울까요?', 
         description: '삭제된 알림은 복구할 수 없어요.',
         leftButtonText: '네', 
         rightButtonText: '아니오', 
-        onRightPressed: () => Navigator.of(context).pop(),
-        onLeftPressed: () {
-          setState(() {
-            notifications.clear();
-          });
+        onLeftPressed: () async {
           Navigator.of(context).pop();
-        },
+          await ApiService.deleteAllNotifications();
+          if (mounted) _refreshNotifications();
+        }, 
+        onRightPressed: () => Navigator.of(context).pop(),
       ),
     );
   }
@@ -48,10 +91,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('알림 (${notifications.length})'),
+        title: Text('알림 ($notificationCount)'),
         actions: [
           IconButton(
-            onPressed: _markAllAsRead, 
+            onPressed: _markAllRead, 
             icon: const Icon(Icons.visibility_outlined),
             tooltip: '모두 읽기',
           ),
@@ -62,40 +105,36 @@ class _NotificationsPageState extends State<NotificationsPage> {
           ),
         ],
       ),
-      body: notifications.isEmpty
-        ? const Center(child: Text('알림이 없습니다.'),)
-        : ListView.builder(
-            itemCount: notifications.length,
-            itemBuilder: (context, index) {
-              final n = notifications[index];
-              final isRead = n['isRead'] as bool;
-              return ListItem(
-                nickname: '', 
-                title: '',
-                content: '', 
-                trailingText: n['date']!,
-                leadingText: null,
-                leadingImageUrl: null,
-                titleWidget: Text(
-                    n['title']!,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: isRead ? FontWeight.normal : FontWeight.bold,
-                        ),
+      body: FutureBuilder<List<NotificationItem>>(
+        future: _notificationsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child:CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('에러: ${snapshot.error}'));
+          } else {
+            final notis = snapshot.data!;
+            return ListView.builder(
+              itemCount: notis.length,
+              itemBuilder: (context, index) {
+                final n = notis[index];
+                return ListItem(
+                  nickname: n.title, 
+                  title: n.body, 
+                  content: '', 
+                  trailingText: '',
+                  leadingText: 'N',
+                  onTap: () => _handleNotificationTap(n.id),
+                  customTrailing: Text(
+                    n.createdAt.substring(0, 10),
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
-                contentWidget: Text(
-                    n['content']!,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  ),
-                onTap: () {
-                  setState(() {
-                    notifications[index]['isRead'] = true;
-                  });
-                },
-              );
-            },
-          ),
+                );
+              },
+            );
+          }
+        },
+      ),
     );
   }
 }
