@@ -1,5 +1,6 @@
 import 'package:bookbug/ui/core/ui/badgebutton_base.dart';
 import 'package:bookbug/ui/core/ui/iconbutton_base.dart';
+import 'package:bookbug/ui/lists/view_model/badge_list_page.dart';
 import 'package:bookbug/ui/profile/view_model/profile_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:bookbug/ui/core/ui/profileimage_Base.dart';
@@ -80,16 +81,10 @@ class Profile extends StatelessWidget {
                 ),
               ),
               Center(
-                child: Row(
+                child: Flex(
+                  direction: Axis.horizontal,
                   children: [
-                    Expanded(
-                      child: BookCard(
-                        title: "title",
-                        author: "author",
-                        rating: 5,
-                        imageUrl: 'imageUrl',
-                      ),
-                    ),
+                    Expanded(child: booksection(context, '최애 책')),
                     Expanded(child: badgesection(context, '뱃지(0)')),
                   ],
                 ),
@@ -181,7 +176,14 @@ class Profile extends StatelessWidget {
                     height: 50,
                     width: double.infinity, //부모 container에 맞춤
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (builder) => BadgeListPage(),
+                          ),
+                        );
+                      },
                       child: Row(
                         children: [
                           Text('더보기'),
