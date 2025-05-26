@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
 
     if (response.statusCode == 200) {
         final List<dynamic> jsonList = jsonDecode(response.body);
+        print(jsonList);
         return jsonList.map((json) => BookCard.fromJson(json)).toList();
             } else {
                 throw Exception('책 데이터를 불러오는 데 실패했습니다');
