@@ -29,7 +29,9 @@ class _LoginPageState extends State<LoginPage> {
     final email = emailController.text;
     final password = passwordController.text;
 
-    final url = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/auth/login');
+    final url = Uri.parse(
+      'https://forifbookbugapi.seongjinemong.app/api/auth/login',
+    );
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -61,13 +63,13 @@ class _LoginPageState extends State<LoginPage> {
         SnackBar(content: Text('${user['username']} 님, 오늘도 책 읽을 준비 되셨나요?')),
       );
     } else if (response.statusCode == 401) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('이메일 또는 비밀번호가 올바르지 않습니다.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('이메일 또는 비밀번호가 올바르지 않습니다.')));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('로그인 실패: ${response.statusCode}')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('로그인 실패: ${response.statusCode}')));
     }
   }
 
@@ -75,7 +77,9 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> loginWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     try {
+
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
 
       if (googleUser != null) {
         final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -162,9 +166,9 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('구글 로그인 중 에러 발생: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('구글 로그인 중 에러 발생: $e')));
     }
   }
 
@@ -200,10 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                 controller: passwordController,
               ),
               const SizedBox(height: 24),
-              ButtonBase(
-                text: '로그인',
-                onPressed: login,
-              ),
+              ButtonBase(text: '로그인', onPressed: login),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
@@ -249,9 +250,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const RegisterPage(),
-                        ),
+                        MaterialPageRoute(builder: (_) => const RegisterPage()),
                       );
                     },
                     style: TextButton.styleFrom(
