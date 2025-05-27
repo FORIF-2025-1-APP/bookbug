@@ -9,9 +9,11 @@ import 'package:bookbug/ui/core/ui/bookcomponent_base.dart';
 import 'package:bookbug/ui/core/ui/iconbutton_base.dart';
 import 'package:bookbug/ui/lists/view_model/notifications_page.dart';
 import 'package:bookbug/ui/search/view_model/search_page.dart';
+import 'package:bookbug/ui/core/ui/token_base.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String token;
+  const HomePage({super.key, required this.token});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,7 +33,7 @@ class _HomePageState extends State<HomePage> {
       if (index == 1) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ReviewWritePage(token: widget.token,)),
+          MaterialPageRoute(builder: (context) => ReviewWritePage(token: widget.token,)),
         );
         return;
       }
