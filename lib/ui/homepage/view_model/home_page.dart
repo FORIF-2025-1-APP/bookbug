@@ -27,6 +27,20 @@ class _HomePageState extends State<HomePage> {
         booksFuture = fetchBooks();
     }
 
+    void _onItemTapped(int index) {
+      if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ReviewWritePage()),
+        );
+        return;
+      }
+
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+
     Future<List<BookCard>> fetchBooks() async {
     final response = await http.get(
         Uri.parse('https://forifbookbugapi.seongjinemong.app/api/books'),
@@ -140,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                             onTap: () => Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (context) => BookDetailPage(),
+                                                    builder: (context) => BookDetailPage(bookId: book.id,),
                                                 ),
                                             ),
                                         ),
@@ -161,7 +175,7 @@ class _HomePageState extends State<HomePage> {
             body: _buildBody(),
             bottomNavigationBar: BottomNavigationBar(
                 currentIndex: _selectedIndex,
-                onTap: (index) => setState(() => _selectedIndex = index),
+                onTap: _onItemTapped,
                 backgroundColor: const Color(0xFFF5F5DC),
                 selectedItemColor: Colors.black,
                 unselectedItemColor: Colors.grey,
