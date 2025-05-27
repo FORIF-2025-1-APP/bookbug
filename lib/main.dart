@@ -1,10 +1,19 @@
-import 'package:bookbug/ui/homepage/view_model/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:bookbug/data/services/auth_provider.dart';
 import 'package:bookbug/ui/login/view_model/login_page.dart';
 import 'package:bookbug/ui/core/themes/theme.dart';
+import 'package:bookbug/ui/homepage/view_model/home_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,13 +25,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: '책 리뷰 앱',
       theme: ThemeData(
-        colorScheme:
-            MediaQuery.platformBrightnessOf(context) == Brightness.dark
-                ? MaterialTheme.darkScheme().toColorScheme()
-                : MaterialTheme.lightScheme().toColorScheme(),
+        colorScheme: MediaQuery.platformBrightnessOf(context) == Brightness.dark
+            ? MaterialTheme.darkScheme().toColorScheme()
+            : MaterialTheme.lightScheme().toColorScheme(),
         fontFamily: 'Pretendard', // 한글 폰트
       ),
-      home: const LoginPage(),
+      home: Consumer<AuthProvider>(
+        builder: (context, auth, _) {
+          return auth.token == null ? const LoginPage() : HomePage(token: auth.token!);  // const 제거
+        },
+      ),
     );
   }
 }

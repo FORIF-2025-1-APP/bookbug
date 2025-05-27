@@ -223,6 +223,7 @@ class _ProfileState extends State<Profile> {
             height: 260,
             width: 160,
             child: BookCard(
+              id: book['id'],
               title: book['title'],
               author: book['author'],
               rating: book['rating'],

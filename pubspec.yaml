@@ -13,7 +13,7 @@ dependencies:
   shared_preferences: ^2.2.2
   flutter:
     sdk: flutter
-
+  provider: ^6.0.0
   photo_manager: ^3.0.0
   permission_handler: ^10.0.0
 

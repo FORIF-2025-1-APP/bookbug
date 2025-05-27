@@ -3,13 +3,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:provider/provider.dart';
+import 'package:bookbug/data/services/auth_provider.dart';
 import 'package:bookbug/ui/core/ui/input_base.dart';
 import 'package:bookbug/ui/core/ui/button_base.dart';
 import 'package:bookbug/ui/core/ui/checkbox_base.dart';
 import 'package:bookbug/ui/login/view_model/register_page.dart';
 import 'package:bookbug/ui/homepage/view_model/home_page.dart';
-import 'package:bookbug/ui/core/ui/token_base.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -45,6 +45,9 @@ class _LoginPageState extends State<LoginPage> {
       final token = responseData['token'];
       final user = responseData['user'];
 
+      // AuthProvider에 토큰 저장
+      context.read<AuthProvider>().setToken(token);
+
       if (autoLogin) {
         await storage.write(key: 'token', value: token);
       }
@@ -52,10 +55,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => TokenBase(
-            token: token,  // 받은 token을 TokenBase로 전달
-            child: const HomePage(),
-          ),
+          builder: (_) => HomePage(token: token), // HomePage로 token 전달
         ),
       );
 
@@ -77,9 +77,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> loginWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     try {
-
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
 
       if (googleUser != null) {
         final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
@@ -124,18 +122,18 @@ class _LoginPageState extends State<LoginPage> {
             final token = responseData['token'];
             final user = responseData['user'];
 
+            // AuthProvider에 idToken 저장
+            context.read<AuthProvider>().setToken(token);
+
             if (autoLogin) {
               await storage.write(key: 'token', value: token);
             }
 
-            // 3. 로그인 성공 후 받은 idToken을 TokenBase로 전달
+            // 3. 로그인 성공 후 HomePage로 이동
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (_) => TokenBase(
-                  token: idToken,
-                  child: const HomePage(),
-                ),
+                builder: (_) => HomePage(token: token),
               ),
             );
 

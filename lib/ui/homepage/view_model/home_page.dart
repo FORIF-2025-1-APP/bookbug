@@ -9,7 +9,6 @@ import 'package:bookbug/ui/core/ui/bookcomponent_base.dart';
 import 'package:bookbug/ui/core/ui/iconbutton_base.dart';
 import 'package:bookbug/ui/lists/view_model/notifications_page.dart';
 import 'package:bookbug/ui/search/view_model/search_page.dart';
-import 'package:bookbug/ui/core/ui/token_base.dart';
 
 class HomePage extends StatefulWidget {
   final String token;
