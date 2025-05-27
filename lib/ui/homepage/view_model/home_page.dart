@@ -145,6 +145,7 @@ class _HomePageState extends State<HomePage> {
                                     return SizedBox(
                                         width: 160,
                                         child: BookCard(
+                                            id: book.id,
                                             title: book.title,
                                             author: book.author,
                                             rating: book.rating,
