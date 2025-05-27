@@ -5,7 +5,9 @@ import 'package:bookbug/data/model/review_model.dart';
 import 'package:bookbug/data/services/api_service.dart';
 
 class WroteListPage extends StatefulWidget {
-  const WroteListPage({super.key});
+  final String token;
+
+  const WroteListPage({super.key, required this.token});
 
   @override
   State<WroteListPage> createState() => _WroteListPageState();
