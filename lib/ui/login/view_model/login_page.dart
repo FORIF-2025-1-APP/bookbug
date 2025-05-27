@@ -49,11 +49,16 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+        MaterialPageRoute(
+          builder: (_) => TokenBase(
+            token: token,  // 받은 token을 TokenBase로 전달
+            child: const HomePage(),
+          ),
+        ),
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${user['username']}님, 오늘도 책 읽을 준비 되셨나요?')),
+        SnackBar(content: Text('${user['username']} 님, 오늘도 책 읽을 준비 되셨나요?')),
       );
     } else if (response.statusCode == 401) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -90,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
-          final String idToken = data['id_token'] ?? '';
+          final String idToken = data['id_token'] ?? '';  // idToken을 받아옴
 
           print('Google ID Token: $idToken');
 
@@ -118,7 +123,8 @@ class _LoginPageState extends State<LoginPage> {
             if (autoLogin) {
               await storage.write(key: 'token', value: token);
             }
-            //3.  로그인 성공 후 받은 idToken을 TokenBase로 전달
+
+            // 3. 로그인 성공 후 받은 idToken을 TokenBase로 전달
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -130,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
             );
 
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${user['username']}님, 구글 로그인 완료!')),
+              SnackBar(content: Text('${user['username']} 님, 오늘도 책 읽을 준비 되셨나요?')),
             );
           } else if (apiResponse.statusCode == 401) {
             ScaffoldMessenger.of(context).showSnackBar(
