@@ -9,6 +9,7 @@ import 'package:bookbug/ui/core/ui/button_base.dart';
 import 'package:bookbug/ui/core/ui/checkbox_base.dart';
 import 'package:bookbug/ui/login/view_model/register_page.dart';
 import 'package:bookbug/ui/homepage/view_model/home_page.dart';
+import 'package:bookbug/ui/core/ui/token_base.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   bool autoLogin = false;
   final storage = const FlutterSecureStorage();
 
+  // 일반 로그인
   Future<void> login() async {
     final email = emailController.text;
     final password = passwordController.text;
@@ -64,38 +66,93 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // 구글 로그인
   Future<void> loginWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
     try {
-      final idToken = '구글 로그인으로 받은 idToken';
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-      final url = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/auth/google');
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'idToken': idToken}),
-      );
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final String? accessToken = googleAuth.accessToken;
 
-      if (!mounted) return;
+        print('Google User: ${googleUser.displayName}');
+        print('Google Access Token: $accessToken');
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final token = data['token'];
-        final user = data['user'];
-
-        if (autoLogin) {
-          await storage.write(key: 'token', value: token);
+        if (accessToken == null) {
+          print('Access Token is null. Google Sign-In might have failed.');
+          return;
         }
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomePage()),
-        );
+        // 1. accessToken을 이용해 idToken을 가져오기
+        final url = Uri.parse('https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=$accessToken');
+        final response = await http.get(url);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${user['username']}님, 구글 로그인 완료!')),
-        );
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          final String idToken = data['id_token'] ?? '';
+
+          print('Google ID Token: $idToken');
+
+          if (idToken.isEmpty) {
+            print('ID Token is empty. Google Sign-In might have failed.');
+            return;
+          }
+
+          // 2. idToken을 서버로 전송
+          final apiUrl = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/auth/google');
+          final apiResponse = await http.post(
+            apiUrl,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'idToken': idToken}),
+          );
+
+          print('Google Login Response Status Code: ${apiResponse.statusCode}');
+          print('Google Login Response Body: ${apiResponse.body}');
+
+          if (apiResponse.statusCode == 200) {
+            final responseData = jsonDecode(apiResponse.body);
+            final token = responseData['token'];
+            final user = responseData['user'];
+
+            if (autoLogin) {
+              await storage.write(key: 'token', value: token);
+            }
+            //3.  로그인 성공 후 받은 idToken을 TokenBase로 전달
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => TokenBase(
+                  token: idToken,
+                  child: const HomePage(),
+                ),
+              ),
+            );
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${user['username']}님, 구글 로그인 완료!')),
+            );
+          } else if (apiResponse.statusCode == 401) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('구글 로그인 실패: 잘못된 토큰')),
+            );
+          } else if (apiResponse.statusCode == 500) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('구글 로그인 실패: 서버 오류')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('구글 로그인 실패: ${apiResponse.statusCode}')),
+            );
+          }
+        } else {
+          print('Failed to retrieve idToken from Google: ${response.statusCode}');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('구글 로그인 실패: idToken을 가져오지 못함')),
+          );
+        }
       } else {
-        throw Exception('Google 로그인 실패: ${response.statusCode}');
+        throw Exception('구글 로그인에 실패했습니다.');
       }
     } catch (e) {
       if (!mounted) return;
