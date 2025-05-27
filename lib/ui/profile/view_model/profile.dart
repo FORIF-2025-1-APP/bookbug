@@ -16,10 +16,10 @@ class Profile extends StatefulWidget {
   const Profile({super.key});
 
   @override
-  State<Profile> createState() => _ProfilePageState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _ProfilePageState extends State<Profile> {
+class _ProfileState extends State<Profile> {
   final ImagePicker _picker = ImagePicker();
   File? _imageFile;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -77,7 +77,7 @@ class _ProfilePageState extends State<Profile> {
               ),
               TextButton(
                 onPressed: () {
-                  _storage.delete(key: 'accessToken');
+                  _storage.delete(key: 'token');
                   Navigator.pop(context);
                   Navigator.pushReplacementNamed(context, '/login');
                 },
@@ -100,14 +100,14 @@ class _ProfilePageState extends State<Profile> {
             iconSize: 20,
             onPressed: () {},
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 8),
           CircleIconButton(
             icon: Icons.dark_mode,
             size: 40,
             iconSize: 20,
             onPressed: () {},
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 8),
           CircleIconButton(
             icon: Icons.logout,
             size: 40,
@@ -128,82 +128,112 @@ class _ProfilePageState extends State<Profile> {
             return const Center(child: Text('사용자 정보가 없습니다.'));
           }
           final user = snapshot.data!;
-          return _buildProfileBody(context, user);
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+                Center(
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage:
+                          _imageFile != null
+                              ? FileImage(_imageFile!)
+                              : (user.image?.isNotEmpty == true
+                                      ? NetworkImage(user.image!)
+                                      : const AssetImage('assets/hyu.jpeg'))
+                                  as ImageProvider,
+                      child:
+                          _imageFile == null && (user.image?.isEmpty ?? true)
+                              ? const Icon(
+                                Icons.add_a_photo,
+                                size: 24,
+                                color: Colors.white70,
+                              )
+                              : null,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Center(
+                  child: Text(
+                    user.name,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Center(
+                  child: TextButton(
+                    onPressed:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ProfileEdit(),
+                          ),
+                        ),
+                    child: const Text('수정하기'),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: Flex(
+                    direction: Axis.horizontal,
+                    children: [
+                      Expanded(child: booksection(context, '최애 책')),
+                      Expanded(child: badgesection(context, '뱃지(0)')),
+                    ],
+                  ),
+                ),
+                reviewsection(context, '작성한 리뷰'),
+                reviewsection(context, '좋아요한 리뷰'),
+              ],
+            ),
+          );
         },
       ),
     );
   }
 
-  Widget _buildProfileBody(BuildContext context, User user) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: _pickImage,
-            child: CircleAvatar(
-              radius: 50,
-              backgroundImage:
-                  _imageFile != null
-                      ? FileImage(_imageFile!)
-                      : (user.image != null && user.image!.isNotEmpty)
-                      ? NetworkImage(user.image!)
-                      : const AssetImage('assets/hyu.jpeg') as ImageProvider,
-              child:
-                  _imageFile == null &&
-                          (user.image == null || user.image!.isEmpty)
-                      ? const Icon(
-                        Icons.add_a_photo,
-                        size: 24,
-                        color: Colors.white70,
-                      )
-                      : null,
+  // Original UI functions
+  Widget booksection(BuildContext context, String title) {
+    final Map<String, dynamic> book = {
+      'title': 'Book',
+      'author': 'Author',
+      'rating': 3.5,
+      'imageUrl': 'https://via.placeholder.com/150x200',
+    };
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: SizedBox(
+            height: 260,
+            width: 160,
+            child: BookCard(
+              title: book['title'],
+              author: book['author'],
+              rating: book['rating'],
+              imageUrl: book['imageUrl'],
             ),
           ),
-          const SizedBox(height: 10),
-          Text(
-            user.name,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(user.email, style: const TextStyle(color: Colors.grey)),
-          const SizedBox(height: 4),
-          Text(
-            '가입일: \${user.createdAt.toLocal().toString().split('
-            ').first}',
-          ),
-          const SizedBox(height: 12),
-          TextButton(
-            onPressed:
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProfileEdit()),
-                ),
-            child: const Text('프로필 수정'),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: BookCard(
-                  title: "title",
-                  author: "author",
-                  rating: 5,
-                  imageUrl: 'imageUrl',
-                ),
-              ),
-              Expanded(child: _badgeSection(context, '뱃지(0)')),
-            ],
-          ),
-          _reviewSection(context, '작성한 리뷰'),
-          _reviewSection(context, '좋아요한 리뷰'),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _badgeSection(BuildContext context, String title) {
+  Widget badgesection(BuildContext context, String title) {
     const badgeAsset = 'assets/hyu.jpeg';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,74 +245,76 @@ class _ProfilePageState extends State<Profile> {
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
-          height: 260,
-          width: 160,
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF0EFE1),
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 200,
-                child: BadgebuttonBase(badge: badgeAsset, badgename: 'HYU'),
-              ),
-              const Spacer(),
-              SizedBox(
-                height: 50,
-                width: double.infinity,
-                child: TextButton(
-                  onPressed:
-                      () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const BadgeListPage(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Container(
+            height: 260,
+            width: 160,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0EFE1),
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(25),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 200,
+                  child: BadgebuttonBase(badge: badgeAsset, badgename: 'HYU'),
+                ),
+                const Spacer(),
+                SizedBox(
+                  height: 50,
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed:
+                        () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const BadgeListPage(),
+                          ),
                         ),
-                      ),
-                  child: const Row(
-                    children: [
-                      Text('더보기'),
-                      Spacer(),
-                      Icon(Icons.arrow_forward, size: 20),
-                    ],
+                    child: const Row(
+                      children: [
+                        Text('더보기'),
+                        Spacer(),
+                        Icon(Icons.arrow_forward, size: 20),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _reviewSection(BuildContext context, String title) {
+  Widget reviewsection(BuildContext context, String title) {
     final reviews = [
       {
-        'nickname': 'nick',
+        'nickname': 'nickname',
         'title': 'title',
         'content': 'content',
         'leadingText': 'A',
         'trailingText': '30',
       },
       {
-        'nickname': 'nick',
+        'nickname': 'nickname',
         'title': 'title',
         'content': 'content',
         'leadingText': 'A',
         'trailingText': '100+',
       },
     ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -295,15 +327,15 @@ class _ProfilePageState extends State<Profile> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: reviews.length,
-            itemBuilder: (ctx, i) {
-              final r = reviews[i];
+            itemBuilder: (context, index) {
+              final review = reviews[index];
               return ListItem(
-                nickname: r['nickname']!,
-                title: r['title']!,
-                content: r['content']!,
-                leadingText: r['leadingText'],
-                leadingImageUrl: r['leadingImageUrl'],
-                trailingText: r['trailingText']!,
+                nickname: review['nickname'] ?? '',
+                title: review['title'] ?? '',
+                content: review['content'] ?? '',
+                leadingText: review['leadingText'],
+                leadingImageUrl: review['leadingImageUrl'],
+                trailingText: review['trailingText'] ?? '',
                 onTap: () {},
               );
             },
