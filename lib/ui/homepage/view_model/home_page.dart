@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
       if (index == 1) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ReviewWritePage()),
+          MaterialPageRoute(builder: (context) => const ReviewWritePage(token: widget.token,)),
         );
         return;
       }
@@ -104,8 +104,6 @@ class _HomePageState extends State<HomePage> {
                 _buildBookSection('월간 Top 10'),
             ],
         );
-        case 1:
-        return const ReviewWritePage();
         case 2:
         return const Profile();
         default:
@@ -154,7 +152,10 @@ class _HomePageState extends State<HomePage> {
                                             onTap: () => Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
-                                                    builder: (context) => BookDetailPage(bookId: book.id,),
+                                                    builder: (context) => BookDetailPage(
+                                                      bookId: book.id,
+                                                      token: widget.token
+                                                    ),
                                                 ),
                                             ),
                                         ),

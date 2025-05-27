@@ -9,7 +9,8 @@ import 'package:bookbug/ui/book/widgets/starrating_base.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ReviewWritePage extends StatefulWidget {
-  const ReviewWritePage({super.key});
+  final String token;
+  const ReviewWritePage({super.key, required this.token});
 
   @override
   State<ReviewWritePage> createState() => _ReviewWritePageState();
@@ -94,7 +95,10 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
 
     final response = await http.post(
       Uri.parse('$baseUrl/api/reviews'),
-      headers: {'Content-Type': 'application/json'},//토큰 필요
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}'
+      },//토큰 필요
       body: jsonEncode({
         'bookId': _selectedBookId,
         'title': controllerTitle.text.trim(),
@@ -116,7 +120,7 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
 
   Future<void> _openBookSearchPopup() async {
     //임시 토큰 파트 시작
-      String token = '';
+      String tokenT = '';
       final urlL = Uri.parse('$baseUrl/api/auth/login');
       final response = await http.post(
         urlL,
@@ -134,7 +138,7 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
         try{
           final decodedData = jsonDecode(response.body);
           print('Decoded JSON: $decodedData');
-          token = decodedData['token'];
+          tokenT = decodedData['token'];
         } catch(e){
           print('failed to decode JSON: $e');
         }
@@ -155,7 +159,7 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
           headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token'
+            'Authorization': 'Bearer $tokenT'
           },
         );
         if (res.statusCode == 200) {

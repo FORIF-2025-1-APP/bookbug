@@ -7,8 +7,9 @@ import 'package:bookbug/ui/book/view_model/book_reply_detail_page.dart';
 
 class BookReplyListPage extends StatefulWidget {
   final String reviewId;
+  final String token;
 
-  const BookReplyListPage({super.key, required this.reviewId});
+  const BookReplyListPage({super.key, required this.reviewId, required this.token});
 
   @override
   State<BookReplyListPage> createState() => _BookReplyListPageState();
@@ -20,7 +21,13 @@ class _BookReplyListPageState extends State<BookReplyListPage> {
   Future<List<dynamic>> fetchReplies() async {
     final url = Uri.parse('$baseUrl/api/replies/review/${widget.reviewId}');
 
-    final response = await http.get(url);
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}'
+      },
+    );
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
@@ -53,7 +60,10 @@ class _BookReplyListPageState extends State<BookReplyListPage> {
               try {
                 final response = await http.post(
                   Uri.parse('$baseUrl/api/replies'),
-                  headers: {'Content-Type': 'application/json'},
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ${widget.token}'
+                  },
                   body: jsonEncode({
                     'reviewId': widget.reviewId,
                     'reply': content,
@@ -119,7 +129,10 @@ class _BookReplyListPageState extends State<BookReplyListPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BookReplyDetailPage(replyId: reply['id']),
+                      builder: (context) => BookReplyDetailPage(
+                        replyId: reply['id'],
+                        token: widget.token
+                      ),
                     ),
                   );
                 },

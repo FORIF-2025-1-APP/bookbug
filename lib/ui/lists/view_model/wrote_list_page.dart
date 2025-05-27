@@ -71,7 +71,11 @@ class _WroteListPageState extends State<WroteListPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => BookReviewDetailPage(reviewId: (review.id).toString(), bookId: (review.bookId).toString()),
+                        builder: (_) => BookReviewDetailPage(
+                          reviewId: (review.id).toString(),
+                          bookId: (review.bookId).toString(),
+                          token: widget.token
+                        ),
                       ),
                     );
                   },

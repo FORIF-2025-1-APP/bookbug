@@ -12,11 +12,13 @@ import 'package:bookbug/ui/book/widgets/starrating_base.dart';
 class BookReviewDetailPage extends StatefulWidget {
   final String reviewId;
   final String bookId;
+  final String token;
 
   const BookReviewDetailPage({
     super.key,
     required this.reviewId,
     required this.bookId,
+    required this.token
   });
 
   @override
@@ -40,9 +42,27 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
 
   Future<void> _loadData() async {
     try {
-      final reviewRes = await http.get(Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'));
-      final bookRes = await http.get(Uri.parse('$baseUrl/api/books/${widget.bookId}'));
-      final replyRes = await http.get(Uri.parse('$baseUrl/api/replies/review/${widget.reviewId}'));
+      final reviewRes = await http.get(
+        Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
+      final bookRes = await http.get(
+        Uri.parse('$baseUrl/api/books/${widget.bookId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
+      final replyRes = await http.get(
+        Uri.parse('$baseUrl/api/replies/review/${widget.reviewId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
 
       if (reviewRes.statusCode == 200 &&
           bookRes.statusCode == 200 &&
@@ -166,7 +186,10 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 try {
                   final response = await http.patch(
                     Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ${widget.token}'
+                    },
                     body: jsonEncode({
                       'title': newTitle,
                       'content': newContent,
@@ -199,7 +222,13 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
 
   Future<void> _deleteReview() async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'));
+      final response = await http.delete(
+        Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
 
       if (response.statusCode == 200) {
         Navigator.pop(context);
@@ -351,7 +380,10 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BookReplyDetailPage(replyId: reply['id']),
+                      builder: (context) => BookReplyDetailPage(
+                        replyId: reply['id'],
+                        token: widget.token
+                      ),
                     ),
                   );
                 },
@@ -366,7 +398,10 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BookReplyListPage(reviewId: widget.reviewId),
+                    builder: (context) => BookReplyListPage(
+                      reviewId: widget.reviewId,
+                      token: widget.token,
+                    ),
                   ),
                 );
               },
