@@ -46,6 +46,11 @@ class _HomePageState extends State<HomePage> {
     Future<List<BookCard>> fetchBooks() async {
     final response = await http.get(
         Uri.parse('https://forifbookbugapi.seongjinemong.app/api/books'),
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${widget.token}'
+        },
     );
 
     if (response.statusCode == 200) {
