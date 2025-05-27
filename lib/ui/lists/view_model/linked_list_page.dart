@@ -59,7 +59,11 @@ class _LinkedListPageState extends State<LinkedListPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => BookReviewDetailPage(reviewId: review.id, bookId: review.bookId),
+                        builder: (_) => BookReviewDetailPage(
+                          reviewId: (review.id).toString(),
+                          bookId: (review.bookId).toString(),
+                          token: widget.token
+                        ),
                       ),
                     );
                   },

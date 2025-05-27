@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
-class TagBase extends StatelessWidget {
+class DeleteableTagBase extends StatelessWidget {
   final String tagName;
-  const TagBase({required this.tagName, super.key});
+  final VoidCallback onDelete;
+
+  const DeleteableTagBase({
+    required this.tagName,
+    required this.onDelete,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +23,28 @@ class TagBase extends StatelessWidget {
           backgroundColor: colorScheme.inversePrimary,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          minimumSize: Size(10, 36),
+          minimumSize: const Size(10, 36),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-        child: Text(
-          tagName,
-          style: const TextStyle(fontSize: 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              tagName,
+              style: const TextStyle(fontSize: 12),
+            ),
+            const SizedBox(width: 4),
+            GestureDetector(
+              onTap: onDelete,
+              child: const Icon(
+                Icons.close,
+                size: 16,
+                color: Color.fromARGB(255, 133, 132, 132),
+              ),
+            ),
+          ],
         ),
       ),
     );

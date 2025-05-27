@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BookCard extends StatelessWidget {
+  final String id;
   final String title;
   final String author;
   final double rating;
@@ -9,6 +10,7 @@ class BookCard extends StatelessWidget {
 
   const BookCard({
     super.key,
+    required this.id,
     required this.title,
     required this.author,
     required this.rating,
@@ -18,6 +20,7 @@ class BookCard extends StatelessWidget {
 
   factory BookCard.fromJson(Map<String, dynamic> json) {
     return BookCard(
+      id: json['id'] ?? '',
       title: json['title'] ?? '제목 없음',
       author: json['author'] ?? '작자 미상',
       rating: (json['rating'] ?? 0).toDouble(),

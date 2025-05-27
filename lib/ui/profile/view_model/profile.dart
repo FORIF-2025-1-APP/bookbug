@@ -178,6 +178,7 @@ class _ProfileState extends State<Profile> {
                     child: const Text('수정하기'),
                   ),
                 ),
+
                 const SizedBox(height: 20),
                 Center(
                   child: Flex(
@@ -276,7 +277,9 @@ class _ProfileState extends State<Profile> {
                         () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const BadgeListPage(),
+
+                            builder: (builder) => BadgeListPage(),
+
                           ),
                         ),
                     child: const Row(
