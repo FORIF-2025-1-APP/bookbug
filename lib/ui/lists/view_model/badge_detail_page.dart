@@ -22,22 +22,22 @@ class _BadgeDetailPageState extends State<BadgeDetailPage> {
   }
 
   Future<void> _setMainBadge() async {
+    if (!mounted) return;
     showDialog(
       context: context, 
-      builder: (context) => PopUpCard(
+      builder: (dialogcontext) => PopUpCard(
         title: '대표 뱃지 설정', 
         description: '이 뱃지를 대표 뱃지로 설정할까요?',
         leftButtonText: '취소', 
         rightButtonText: '설정', 
-        onLeftPressed: () => Navigator.of(context).pop(), 
+        onLeftPressed: () => Navigator.of(dialogcontext).pop(), 
         onRightPressed: () async {
-          Navigator.of(context).pop();
+          Navigator.of(dialogcontext).pop();
           await ApiService.setMainBadge(widget.badgeId);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('대표 뱃지로 설정되었습니다.')),
-            );
-          }
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('대표 뱃지로 설정되었습니다.')),
+          );
         },
       ),
     );
