@@ -93,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
       );
     } else if (response.statusCode == 400) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('입력값을 확인해주세요.')),
+        const SnackBar(content: Text('이미 존재하는 이메일입니다.')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
