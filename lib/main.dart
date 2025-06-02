@@ -9,20 +9,20 @@ import 'package:bookbug/ui/homepage/view_model/home_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final authProvider = AuthProvider();
-  final shouldAutoLogin = await TokenManager.isAutoLoginEnabled();
 
+  final shouldAutoLogin = await TokenManager.isAutoLoginEnabled();
   if (shouldAutoLogin) {
     final savedToken = await TokenManager.getToken();
     if (savedToken != null && savedToken.isNotEmpty) {
-      await authProvider.setToken(savedToken); // ★ 자동 로그인 핵심
+      await authProvider.setToken(savedToken);
     }
   }
 
   runApp(
-
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
-
+      providers: [
+        ChangeNotifierProvider(create: (_) => authProvider),
+      ],
       child: const MyApp(),
     ),
   );
