@@ -8,9 +8,7 @@ import 'package:bookbug/ui/homepage/view_model/home_page.dart';
 void main() {
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
       child: const MyApp(),
     ),
   );
@@ -25,14 +23,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: '책 리뷰 앱',
       theme: ThemeData(
-        colorScheme: MediaQuery.platformBrightnessOf(context) == Brightness.dark
-            ? MaterialTheme.darkScheme().toColorScheme()
-            : MaterialTheme.lightScheme().toColorScheme(),
+        colorScheme:
+            MediaQuery.platformBrightnessOf(context) == Brightness.dark
+                ? MaterialTheme.darkScheme().toColorScheme()
+                : MaterialTheme.lightScheme().toColorScheme(),
         fontFamily: 'Pretendard', // 한글 폰트
       ),
       home: Consumer<AuthProvider>(
         builder: (context, auth, _) {
-          return auth.token == null ? const LoginPage() : HomePage(token: auth.token!);  // const 제거
+          return auth.token == null
+              ? const LoginPage()
+              : HomePage(token: auth.token!); // const 제거
         },
       ),
     );
