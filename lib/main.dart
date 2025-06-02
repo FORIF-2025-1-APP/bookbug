@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:bookbug/data/services/token_manager.dart';
 import 'package:bookbug/data/services/auth_provider.dart';
 import 'package:bookbug/ui/login/view_model/login_page.dart';
 import 'package:bookbug/ui/core/themes/theme.dart';
@@ -7,9 +8,15 @@ import 'package:bookbug/ui/homepage/view_model/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final authProvider = AuthProvider();
-  await authProvider.getTokenFromStorage();
+  final shouldAutoLogin = await TokenManager.isAutoLoginEnabled();
+
+  if (shouldAutoLogin) {
+    final savedToken = await TokenManager.getToken();
+    if (savedToken != null && savedToken.isNotEmpty) {
+      await authProvider.setToken(savedToken); // ★ 자동 로그인 핵심
+    }
+  }
 
   runApp(
     ChangeNotifierProvider.value(
