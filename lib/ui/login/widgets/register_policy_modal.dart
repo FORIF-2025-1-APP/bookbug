@@ -35,35 +35,34 @@ class _RegisterPolicyModalState extends State<RegisterPolicyModal> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Text(
-                  widget.content,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.content,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Checkbox(
-                  value: checked,
-                  onChanged: (val) {
-                    if (val == true && checked == false) {
-                      Navigator.pop(context, true); // 체크 시 모달 닫고 true 전달
-                    } else {
-                      setState(() {
-                        checked = val ?? false; // 해제는 내부 상태만 변경
-                      });
-                    }
-                  },
-                ),
-                const Text('동의합니다'),
-              ],
-            ),
-          ],
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Checkbox(
+                    value: checked,
+                    onChanged: (val) {
+                      if (val == true && checked == false) {
+                        Navigator.pop(context, true);
+                      } else {
+                        setState(() {
+                          checked = val ?? false;
+                        });
+                      }
+                    },
+                  ),
+                  const Text('동의합니다'),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

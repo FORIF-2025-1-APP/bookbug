@@ -4,7 +4,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
+
+import 'package:bookbug/data/services/token_manager.dart';
 import 'package:bookbug/data/services/auth_provider.dart';
+
 import 'package:bookbug/ui/core/ui/input_base.dart';
 import 'package:bookbug/ui/core/ui/button_base.dart';
 import 'package:bookbug/ui/core/ui/checkbox_base.dart';
@@ -49,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
       context.read<AuthProvider>().setToken(token);
 
       if (autoLogin) {
-        await storage.write(key: 'token', value: token);
+        await TokenManager.saveToken(token);
       }
 
       Navigator.pushReplacement(

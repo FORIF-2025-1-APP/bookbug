@@ -11,6 +11,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> setToken(String? token) async {
     _token = token;
     if (token != null) {
+      print('[DEBUG] 저장할 토큰: $token');
       await storage.write(key: 'auth_token', value: token);
     }
     notifyListeners();
