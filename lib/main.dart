@@ -12,8 +12,10 @@ void main() async {
   await authProvider.getTokenFromStorage();
 
   runApp(
-    ChangeNotifierProvider.value(
-      value: authProvider,
+
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+
       child: const MyApp(),
     ),
   );
@@ -28,16 +30,20 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: '책 리뷰 앱',
       theme: ThemeData(
+
         colorScheme: MediaQuery.platformBrightnessOf(context) == Brightness.dark
             ? MaterialTheme.darkScheme().toColorScheme()
             : MaterialTheme.lightScheme().toColorScheme(),
         fontFamily: 'Pretendard',
+
       ),
       home: Consumer<AuthProvider>(
         builder: (context, auth, _) {
           return auth.token == null
               ? const LoginPage()
+
               : HomePage(token: auth.token!);
+
         },
       ),
     );

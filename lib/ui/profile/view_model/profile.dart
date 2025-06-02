@@ -11,6 +11,8 @@ import 'package:bookbug/ui/core/ui/bookcomponent_base.dart';
 import 'package:bookbug/ui/core/ui/badgebutton_base.dart';
 import 'package:bookbug/ui/core/ui/iconbutton_base.dart';
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
+import 'package:provider/provider.dart';
+import 'package:bookbug/data/services/auth_provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -32,10 +34,11 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _loadUser() async {
-    final token = await _storage.read(key: 'token');
+    final token = context.read<AuthProvider>().token;
     if (token != null) {
-      _userFuture = getUserProfile(token);
-      setState(() {});
+      setState(() {
+        _userFuture = getUserProfile(token);
+      });
     }
   }
 
@@ -52,8 +55,10 @@ class _ProfileState extends State<Profile> {
       if (token != null) {
         try {
           await uploadProfileImage(token, file);
-          _userFuture = getUserProfile(token);
-          setState(() {});
+
+          setState(() {
+            _userFuture = getUserProfile(token);
+          });
         } catch (e) {
           ScaffoldMessenger.of(
             context,
@@ -67,7 +72,7 @@ class _ProfileState extends State<Profile> {
     showDialog(
       context: context,
       builder:
-          (_) => AlertDialog(
+          (context) => AlertDialog(
             title: const Text("로그아웃 하시겠어요?"),
             content: const Text("떠나신다니 슬퍼요.."),
             actions: [
@@ -76,10 +81,19 @@ class _ProfileState extends State<Profile> {
                 child: const Text("취소"),
               ),
               TextButton(
-                onPressed: () {
-                  _storage.delete(key: 'token');
+                onPressed: () async {
                   Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, '/login');
+
+                  await _storage.delete(key: 'token');
+                  await _storage.delete(key: 'auth_token');
+
+                  if (!mounted) return;
+                  Provider.of<AuthProvider>(context, listen: false).logout();
+
+                  if (!mounted) return;
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil('/login', (route) => false);
                 },
                 child: const Text("로그아웃"),
               ),
@@ -143,7 +157,9 @@ class _ProfileState extends State<Profile> {
                               ? FileImage(_imageFile!)
                               : (user.image?.isNotEmpty == true
                                       ? NetworkImage(user.image!)
-                                      : const AssetImage('assets/hyu.jpeg'))
+                                      : const AssetImage(
+                                        'assets/defaultimage.png',
+                                      ))
                                   as ImageProvider,
                       child:
                           _imageFile == null && (user.image?.isEmpty ?? true)
@@ -168,13 +184,14 @@ class _ProfileState extends State<Profile> {
                 ),
                 Center(
                   child: TextButton(
-                    onPressed:
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ProfileEdit(),
-                          ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ProfileEdit(user: user),
                         ),
+                      );
+                    },
                     child: const Text('수정하기'),
                   ),
                 ),
@@ -202,6 +219,7 @@ class _ProfileState extends State<Profile> {
   // Original UI functions
   Widget booksection(BuildContext context, String title) {
     final Map<String, dynamic> book = {
+      'id': 'id',
       'title': 'Book',
       'author': 'Author',
       'rating': 3.5,
@@ -278,9 +296,7 @@ class _ProfileState extends State<Profile> {
                         () => Navigator.push(
                           context,
                           MaterialPageRoute(
-
                             builder: (builder) => BadgeListPage(),
-
                           ),
                         ),
                     child: const Row(
