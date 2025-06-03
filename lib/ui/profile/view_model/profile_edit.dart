@@ -86,26 +86,58 @@ class _ProfileEditState extends State<ProfileEdit> {
     // ② 비밀번호 변경 등 기타 프로필 정보 업데이트
     final newPassword = _passwordController.text.trim();
     final confirmPassword = _passwordConfirmController.text.trim();
-    if (newPassword.isNotEmpty && newPassword == confirmPassword) {
-      await updateUserProfile(token: token, password: newPassword);
+    if (newPassword.isEmpty && confirmPassword.isEmpty) {
+      // → 이미지 업로드만 처리하거나, “비밀번호 변경은 건너뜁니다” 로직 진행
     }
-    // ③ 서버에서 최신 유저 정보 다시 받아오기
-    final updatedUser = await getUserProfile(token);
-    if (!mounted) return;
+    // 4) 하나만 입력되었거나 서로 다르면 에러
+    else if (newPassword.isEmpty || confirmPassword.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('비밀번호와 확인 비밀번호를 모두 입력해주세요.')),
+      );
+      return;
+    } else if (newPassword != confirmPassword) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('비밀번호가 일치하지 않습니다.')));
+      return;
+    }
 
-    // ④ 화면 갱신
-    setState(() {
-      // widget.user 자체를 대체하거나, 본인 취향대로 처리
-      // 여기서는 widget.user 대신에 _pickedImageFile과 updatedUser.image를 사용할 수도 있습니다.
-      _pickedImageFile = null;
-      _idController.text = updatedUser.id;
-      _emailController.text = updatedUser.email;
-      // 필요하다면 widget.user = updatedUser; 로 교체하거나, 부모 화면인 Profile로 pop 후 갱신하도록 설계
-    });
+    try {
+      // 6) 이미지 업로드
+      if (_pickedImageFile != null) {
+        await uploadProfileImage(token, _pickedImageFile!);
+      }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('프로필이 수정되었습니다.')));
+      // 7) 비밀번호 변경 API 호출 (필요하다면 updateUserProfile에 email/id 등 다른 필드도 함께 보냄)
+      if (newPassword.isNotEmpty) {
+        await updateUserProfile(
+          token: token,
+          password: newPassword,
+          // 만약 서버가 이메일 등을 요구한다면 아래처럼 추가:
+          // email: _emailController.text.trim(),
+          // name: widget.user.name, // 이름 변경 기능이 있다면 여기에…
+        );
+      }
+
+      // 8) 업데이트 후 서버에서 최신 정보 조회
+      final updatedUser = await getUserProfile(token);
+      if (!mounted) return;
+
+      // 9) (선택) 부모 화면에 변경된 정보를 반영하거나, 단순히 Pop 후 Profile 화면에서 setState를 호출하도록 설계
+      // 여기서는 Pop하면서 결과를 반환할 수 있습니다:
+      Navigator.pop(context, updatedUser);
+      // Profile 화면에서 Navigator.push(...).then((result) { setState(() => user = result); });
+
+      // 10) 성공 메시지
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('프로필 수정이 완료되었습니다.')));
+    } catch (e) {
+      // 11) API 호출 중 에러가 발생하면 메시지 출력
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('수정 중 오류가 발생했습니다: \$e')));
+    }
   }
 
   @override

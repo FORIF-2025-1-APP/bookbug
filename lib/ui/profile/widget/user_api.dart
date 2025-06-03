@@ -5,39 +5,43 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<User> getUserProfile(String token) async {
-  // 예시 URL: /api/user/profile
+  final url = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/user');
   final response = await http.get(
-    Uri.parse('https://forifbookbugapi.seongjinemong.app/api/user'),
-    headers: {'Authorization': 'Bearer $token'},
-  );
-  if (response.statusCode == 200) {
-    return User.fromJson(json.decode(response.body));
-  } else {
-    throw Exception('프로필 정보를 가져오지 못했습니다.');
-  }
-}
-
-Future<void> updateUserProfile({
-  required String token,
-  String? password,
-  // 그 외 수정 가능한 필드 있으면 파라미터에 추가
-}) async {
-  final body = <String, dynamic>{};
-  if (password != null && password.isNotEmpty) {
-    body['password'] = password;
-  }
-  // 그 외 수정 가능한 필드가 있다면 body에 추가
-
-  final response = await http.put(
-    Uri.parse('https://forifbookbugapi.seongjinemong.app/api/user'),
+    url,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     },
-    body: json.encode(body),
   );
   if (response.statusCode != 200) {
-    throw Exception('프로필 업데이트에 실패했습니다.');
+    throw Exception('유저 정보 가져오기 실패: ${response.statusCode}');
+  }
+  final data = jsonDecode(response.body);
+  return User.fromJson(data);
+}
+
+Future<void> updateUserProfile({
+  required String token,
+  String? name,
+  String? email,
+  String? password,
+}) async {
+  final url = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/user');
+  final body = <String, dynamic>{};
+  if (name != null) body['name'] = name;
+  if (email != null) body['email'] = email;
+  if (password != null) body['password'] = password;
+
+  final response = await http.patch(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(body),
+  );
+  if (response.statusCode != 200) {
+    throw Exception('프로필 업데이트 실패: ${response.statusCode}');
   }
 }
 
