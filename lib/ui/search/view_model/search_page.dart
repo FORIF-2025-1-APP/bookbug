@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
 
 class SearchPage extends StatefulWidget {
   final String token;
@@ -34,21 +34,26 @@ class _SearchPageState extends State<SearchPage> {
     final tag = tagController.text.trim();
     final category = selectedCategory;
 
-    if ([title, author, publisher, tag, category].every((e) => e.isEmpty)) return;
+    if ([title, author, publisher, tag, category].every((e) => e.isEmpty)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('최소 한 글자 이상 입력하세요')),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     final queryParameters = {
-      'query': title,
-      'author': author,
-      'publisher': publisher,
-      'tag': tag,
-      'category': category,
-    }..removeWhere((key, value) => value.isEmpty);
+      if (title.isNotEmpty) 'query': title,
+      if (author.isNotEmpty) 'author': author,
+      if (publisher.isNotEmpty) 'publisher': publisher,
+      if (tag.isNotEmpty) 'tag': tag,
+      if (category.isNotEmpty) 'category': category,
+    };
 
     final uri = Uri.https('forifbookbugapi.seongjinemong.app', '/api/books', queryParameters);
 
-    debugPrint('🔍 검색 요청: $uri');
+    debugPrint('검색 요청: $uri');
 
     final response = await http.get(
       uri,
@@ -60,14 +65,14 @@ class _SearchPageState extends State<SearchPage> {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      debugPrint('📡 응답 내용: ${response.body}');
+      debugPrint('응답 내용: ${response.body}');
       setState(() {
         final rawBooks = data['books'] ?? data['items'] ?? [];
         books = List<Map<String, dynamic>>.from(rawBooks);
         _isLoading = false;
       });
     } else {
-      debugPrint('❌ 검색 실패: ${response.body}');
+      debugPrint('검색 실패: ${response.body}');
       setState(() {
         books = [];
         _isLoading = false;
@@ -84,7 +89,11 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: TextField(
           controller: titleController,
-          decoration: const InputDecoration(hintText: '제목', border: InputBorder.none),
+          decoration: InputDecoration(
+            hintText: '제목',
+            hintStyle: TextStyle(color: Colors.black.withOpacity(0.5)),
+            border: InputBorder.none,
+          ),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -147,24 +156,32 @@ class _SearchPageState extends State<SearchPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: DecorationImage(
-                                        image: book['image'] != null
-                                            ? NetworkImage(book['image'])
-                                            : const AssetImage('assets/images/default_book.png')
-                                                as ImageProvider,
-                                        fit: BoxFit.cover,
-                                      ),
+                                Container(
+                                  height: 140,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(8),
+                                    image: DecorationImage(
+                                      image: book['image'] != null
+                                          ? NetworkImage(book['image'])
+                                          : const AssetImage('assets/images/default_book.png') as ImageProvider,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                Text(book['title'] ?? '제목 없음', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                Text(book['author'] ?? '저자 없음'),
+                                Text(
+                                  book['title'] ?? '제목 없음',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  book['author'] ?? '저자 없음',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                                 Row(
                                   children: [
                                     const Icon(Icons.star, size: 14, color: Colors.amber),
