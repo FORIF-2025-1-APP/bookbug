@@ -48,7 +48,6 @@ class _LoginPageState extends State<LoginPage> {
       final token = responseData['token'];
       final user = responseData['user'];
 
-      // AuthProvider에 토큰 저장
       await context.read<AuthProvider>().setToken(token);
 
       if (autoLogin) {
@@ -62,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => HomePage(token: token), // HomePage로 token 전달
+          builder: (_) => HomePage(token: token),
         ),
       );
 
@@ -82,29 +81,22 @@ class _LoginPageState extends State<LoginPage> {
 
   // 구글 로그인
   Future<void> loginWithGoogle() async {
-  final GoogleSignIn googleSignIn = GoogleSignIn(
-    scopes: ['email'],
-    serverClientId: '389994566577-g2nuaonpjdaapb6hc93do8i79tun1oqo.apps.googleusercontent.com',
-  );
+  final GoogleSignIn googleSignIn = GoogleSignIn();
   try {
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
     if (googleUser == null) {
-      throw Exception('구글 로그인에 실패했습니다.'); // 로그인 취소됨
+      throw Exception('구글 로그인에 실패했습니다.');
     }
 
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final String? idToken = googleAuth.idToken;
+    final String? idToken = googleAuth.accessToken;
 
     print('Google User: ${googleUser.displayName}');
     print('Google ID Token: $idToken');
 
-    if (idToken == null || idToken.isEmpty) {
-      print('ID Token is null or empty. Google Sign-In failed.');
-      return;
-    }
 
-    // 2. idToken을 서버로 전송
+
     final apiUrl = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/auth/google');
     final apiResponse = await http.post(
       apiUrl,
