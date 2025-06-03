@@ -4,7 +4,7 @@ import 'package:bookbug/data/services/token_manager.dart';
 import 'package:bookbug/data/services/auth_provider.dart';
 import 'package:bookbug/ui/login/view_model/login_page.dart';
 import 'package:bookbug/ui/core/themes/theme.dart';
-import 'package:bookbug/ui/homepage/view_model/home_page.dart';
+import 'package:bookbug/ui/home/view_model/home_page.dart';
 import 'package:bookbug/ui/login/widgets/splash_widget.dart';
 
 void main() async {

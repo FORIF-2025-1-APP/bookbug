@@ -12,7 +12,7 @@ import 'package:bookbug/ui/core/ui/input_base.dart';
 import 'package:bookbug/ui/core/ui/button_base.dart';
 import 'package:bookbug/ui/core/ui/checkbox_base.dart';
 import 'package:bookbug/ui/login/view_model/register_page.dart';
-import 'package:bookbug/ui/homepage/view_model/home_page.dart';
+import 'package:bookbug/ui/home/view_model/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
