@@ -27,7 +27,7 @@ class _ProfileEditState extends State<ProfileEdit> {
   File? _pickedImageFile;
 
   // 텍스트 필드 컨트롤러 (예: ID, Email, Password 등)
-  late final TextEditingController _idController;
+  late final TextEditingController _usernameController;
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   late final TextEditingController _passwordConfirmController;
@@ -37,7 +37,7 @@ class _ProfileEditState extends State<ProfileEdit> {
     super.initState();
 
     // 1) 컨트롤러 초기화
-    _idController = TextEditingController(text: widget.user.id);
+    _usernameController = TextEditingController(text: widget.user.name);
     _emailController = TextEditingController(text: widget.user.email);
     _passwordController = TextEditingController();
     _passwordConfirmController = TextEditingController();
@@ -45,7 +45,7 @@ class _ProfileEditState extends State<ProfileEdit> {
 
   @override
   void dispose() {
-    _idController.dispose();
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _passwordConfirmController.dispose();
@@ -79,64 +79,51 @@ class _ProfileEditState extends State<ProfileEdit> {
       return;
     }
 
-    // ① 이미지 업로드
-    if (_pickedImageFile != null) {
-      await uploadProfileImage(token, _pickedImageFile!);
-    }
-    // ② 비밀번호 변경 등 기타 프로필 정보 업데이트
-    final newPassword = _passwordController.text.trim();
-    final confirmPassword = _passwordConfirmController.text.trim();
-    if (newPassword.isEmpty && confirmPassword.isEmpty) {
-      // → 이미지 업로드만 처리하거나, “비밀번호 변경은 건너뜁니다” 로직 진행
-    }
-    // 4) 하나만 입력되었거나 서로 다르면 에러
-    else if (newPassword.isEmpty || confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('비밀번호와 확인 비밀번호를 모두 입력해주세요.')),
-      );
-      return;
-    } else if (newPassword != confirmPassword) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('비밀번호가 일치하지 않습니다.')));
-      return;
-    }
-
     try {
-      // 6) 이미지 업로드
+      // ① 이미지 업로드
       if (_pickedImageFile != null) {
         await uploadProfileImage(token, _pickedImageFile!);
       }
-
-      // 7) 비밀번호 변경 API 호출 (필요하다면 updateUserProfile에 email/id 등 다른 필드도 함께 보냄)
-      if (newPassword.isNotEmpty) {
+      // ② 비밀번호 변경 등 기타 프로필 정보 업데이트
+      final newUsername = _usernameController.text.trim();
+      final newPassword = _passwordController.text.trim();
+      final confirmPassword = _passwordConfirmController.text.trim();
+      if (newPassword.isNotEmpty || confirmPassword.isNotEmpty) {
+        if (newPassword.isEmpty || confirmPassword.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('비밀번호와 확인 비밀번호를 모두 입력해주세요.')),
+          );
+          return;
+        }
+        if (newPassword != confirmPassword) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('비밀번호가 일치하지 않습니다.')));
+          return;
+        }
         await updateUserProfile(
           token: token,
+          username: newUsername,
           password: newPassword,
-          // 만약 서버가 이메일 등을 요구한다면 아래처럼 추가:
-          // email: _emailController.text.trim(),
-          // name: widget.user.name, // 이름 변경 기능이 있다면 여기에…
         );
+      } else {
+        await updateUserProfile(token: token, username: newUsername);
       }
 
-      // 8) 업데이트 후 서버에서 최신 정보 조회
+      // ③ 서버에서 최신 유저 정보 다시 받아오기
       final updatedUser = await getUserProfile(token);
       if (!mounted) return;
 
-      // 9) (선택) 부모 화면에 변경된 정보를 반영하거나, 단순히 Pop 후 Profile 화면에서 setState를 호출하도록 설계
-      // 여기서는 Pop하면서 결과를 반환할 수 있습니다:
+      // ④ 화면 갱신
       Navigator.pop(context, updatedUser);
-      // Profile 화면에서 Navigator.push(...).then((result) { setState(() => user = result); });
 
-      // 10) 성공 메시지
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('프로필 수정이 완료되었습니다.')));
+      ).showSnackBar(const SnackBar(content: Text('프로필이 수정되었습니다.')));
     } catch (e) {
-      // 11) API 호출 중 에러가 발생하면 메시지 출력
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('수정 중 오류가 발생했습니다: \$e')));
+      ).showSnackBar(SnackBar(content: Text('수정 중 오류가 발생했습니다: $e')));
     }
   }
 
@@ -198,12 +185,12 @@ class _ProfileEditState extends State<ProfileEdit> {
 
               const SizedBox(height: 30),
 
-              // ─── ID (읽기 전용) ───
+              // ─── username ───
               _buildTextField(
-                controller: _idController,
-                labelText: 'ID',
-                readOnly: true,
-                hintText: '아이디',
+                controller: _usernameController,
+                labelText: 'username',
+                readOnly: false,
+                hintText: '닉네임',
               ),
               const SizedBox(height: 16),
 
