@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// 원형 아이콘 버튼 위젯
 class CircleIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
@@ -15,8 +14,8 @@ class CircleIconButton extends StatelessWidget {
     required this.onPressed,
     this.backgroundColor,
     this.iconColor,
-    this.size = 48.0,
-    this.iconSize = 24.0,
+    this.size = 40.0,
+    this.iconSize = 20.0,
   });
 
   @override

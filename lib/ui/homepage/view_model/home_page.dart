@@ -9,6 +9,7 @@ import 'package:bookbug/ui/core/ui/bookcomponent_base.dart';
 import 'package:bookbug/ui/core/ui/iconbutton_base.dart';
 import 'package:bookbug/ui/lists/view_model/notifications_page.dart';
 import 'package:bookbug/ui/search/view_model/search_page.dart';
+import 'package:bookbug/ui/homepage/widgets/bottomnavigationbar_widget.dart';
 
 class HomePage extends StatefulWidget {
   final String token;
@@ -31,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       if (index == 1) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ReviewWritePage(token: widget.token,)),
+          MaterialPageRoute(builder: (context) => ReviewWritePage(token: widget.token)),
         );
         return;
       }
@@ -74,43 +75,41 @@ class _HomePageState extends State<HomePage> {
     }
 
     PreferredSizeWidget? _buildAppBar() {
-        switch (_selectedIndex) {
-            case 0:
-            return AppBar(
-                title: const Text('Home'),
-                actions: [
-                    Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: CircleIconButton(
-                    icon: Icons.search,
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SearchPage(token: widget.token,)),
-                        ),
-                        iconSize: 24,
-                        iconColor: Colors.green[900],
-                        ),
-                    ),
-                    Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: CircleIconButton(
-                    icon: Icons.notifications,
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const NotificationsPage()),
-                        ),
-                        iconSize: 24,
-                        iconColor: Colors.green[900],
-                        ),
-                    ),
-                ],
-            );
-            case 1:
-            return null;
-            case 2:
-            return null;
-            default:
-            return AppBar(title: const Text('오류'));
-        }
-    }
+  switch (_selectedIndex) {
+    case 0:
+      return AppBar(
+        title: const Text('Home'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: CircleIconButton(
+              icon: Icons.search,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchPage(token: widget.token)),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: CircleIconButton(
+              icon: Icons.notifications,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              ),
+            ),
+          ),
+        ],
+      );
+    case 1:
+      return null;
+    case 2:
+      return null;
+    default:
+      return AppBar(title: const Text('오류'));
+  }
+}
 
     Widget _buildBody() {
         switch (_selectedIndex) {
@@ -190,30 +189,13 @@ class _HomePageState extends State<HomePage> {
 
     @override
     Widget build(BuildContext context) {
-        return Scaffold(
-            appBar: _buildAppBar(),
-            body: _buildBody(),
-            bottomNavigationBar: BottomNavigationBar(
-                currentIndex: _selectedIndex,
-                onTap: _onItemTapped,
-                backgroundColor: const Color(0xFFF5F5DC),
-                selectedItemColor: Colors.black,
-                unselectedItemColor: Colors.grey,
-                items: const [
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.bookmark),
-                        label: 'Home',
-                    ),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.add),
-                        label: 'Review',
-                    ),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.person),
-                        label: 'Profile',
-                    ),
-                ],
-            ),
-        );
+      return Scaffold(
+        appBar: _buildAppBar(),
+        body: _buildBody(),
+        bottomNavigationBar: BottomNavigationBarWidget(
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
+        ),
+      );
     }
 }
