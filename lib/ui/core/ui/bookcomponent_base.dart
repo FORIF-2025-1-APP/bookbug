@@ -19,14 +19,18 @@ class BookCard extends StatelessWidget {
   });
 
   factory BookCard.fromJson(Map<String, dynamic> json) {
-    return BookCard(
-      id: json['id'] ?? '',
-      title: json['title'] ?? '제목 없음',
-      author: json['author'] ?? '작자 미상',
-      rating: (json['rating'] ?? 0).toDouble(),
-      imageUrl: json['image'] ?? 'https://via.placeholder.com/150x200',
-    );
+  String id = json['id'] ?? '';
+  if (id.isEmpty) {
+    print("[ERROR] Book ID is empty for book: ${json['title']}");
   }
+  return BookCard(
+    id: id.isEmpty ? 'default-id-${DateTime.now().millisecondsSinceEpoch}' : id,
+    title: json['title'] ?? '제목 없음',
+    author: json['author'] ?? '작자 미상',
+    rating: (json['rating'] ?? 0).toDouble(),
+    imageUrl: json['image'] ?? 'https://via.placeholder.com/150x200',
+  );
+}
 
   @override
   Widget build(BuildContext context) {

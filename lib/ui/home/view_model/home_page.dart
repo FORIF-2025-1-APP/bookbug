@@ -43,17 +43,16 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<List<BookCard>> fetchBooks(String type, {String query = ''}) async {
+  Future<List<BookCard>> fetchBooks({String query = ''}) async {
     if (widget.token.isEmpty) {
       throw Exception('토큰이 없습니다. 로그인 상태를 확인해주세요.');
     }
 
     final uri = Uri.parse(
-      'https://forifbookbugapi.seongjinemong.app/api/books?type=$type&query=$query'
+      'https://forifbookbugapi.seongjinemong.app/api/books?query=$query'
     );
 
     print("[DEBUG] 최종 요청 URI: $uri");
-    print("[DEBUG] 전달된 type 값: $type");
 
     final response = await http.get(
       uri,
@@ -78,9 +77,8 @@ class _HomePageState extends State<HomePage> {
       throw Exception('인증이 필요합니다. 토큰을 확인해주세요.');
     } else if (response.statusCode == 400) {
       throw Exception('잘못된 요청입니다. 쿼리 파라미터를 확인해주세요.');
-    } else {
-      throw Exception('책 데이터를 불러오는 데 실패했습니다 ($type)');
     }
+    return [];
   }
 
 
@@ -121,7 +119,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget _buildBody() {
+Widget _buildBody() {
   switch (_selectedIndex) {
     case 0:
       return Center(
@@ -137,10 +135,11 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               String query = generateRandomWord();
               return FutureBuilder<List<BookCard>>(
-                future: fetchBooks('recommendation', query: query),
+                future: fetchBooks(query: query),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const SizedBox.shrink();
+                    // return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('오류: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -158,15 +157,18 @@ class _HomePageState extends State<HomePage> {
                       author: book.author,
                       rating: book.rating,
                       imageUrl: book.imageUrl,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BookDetailPage(
-                            bookId: book.id,
-                            token: widget.token,
+                      onTap: () {
+                        print("[DEBUG] Navigating to BookDetailPage with isbn: ${book.id}");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookDetailPage(
+                              bookId: book.id,
+                              token: widget.token,
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   );
                 },
