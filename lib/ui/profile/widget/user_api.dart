@@ -22,13 +22,13 @@ Future<User> getUserProfile(String token) async {
 
 Future<void> updateUserProfile({
   required String token,
-  String? name,
+  String? username,
   String? email,
   String? password,
 }) async {
   final url = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/user');
   final body = <String, dynamic>{};
-  if (name != null) body['name'] = name;
+  if (username != null) body['username'] = username;
   if (email != null) body['email'] = email;
   if (password != null) body['password'] = password;
 
@@ -46,15 +46,28 @@ Future<void> updateUserProfile({
 }
 
 Future<void> uploadProfileImage(String token, File imageFile) async {
-  final request = http.MultipartRequest(
-    'POST',
-    Uri.parse('https://forifbookbugapi.seongjinemong.app/api/user'),
-  );
+  final uri = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/user');
+  final request = http.MultipartRequest('PATCH', uri);
+
   request.headers['Authorization'] = 'Bearer $token';
-  request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+  final multipartFile = await http.MultipartFile.fromPath(
+    'image',
+    imageFile.path,
+  );
+  request.files.add(multipartFile);
+
   final streamedResponse = await request.send();
   final response = await http.Response.fromStream(streamedResponse);
+
   if (response.statusCode != 200) {
-    throw Exception('이미지 업로드에 실패했습니다.');
+    String serverMessage;
+    try {
+      final bodyJson = jsonDecode(response.body);
+      serverMessage = bodyJson['message']?.toString() ?? response.body;
+    } catch (_) {
+      serverMessage = response.body;
+    }
+    throw Exception('이미지 업로드 실패: ${response.statusCode} / $serverMessage');
   }
 }
