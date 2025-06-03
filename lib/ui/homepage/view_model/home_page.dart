@@ -13,19 +13,18 @@ import 'package:bookbug/ui/search/view_model/search_page.dart';
 class HomePage extends StatefulWidget {
   final String token;
   const HomePage({super.key, required this.token});
+  final String baseUrl = 'https://forifbookbugapi.seongjinemong.app';
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-    late Future<List<BookCard>> booksFuture;
     int _selectedIndex = 0;
 
     @override
     void initState() {
         super.initState();
-        booksFuture = fetchBooks();
     }
 
     void _onItemTapped(int index) {
@@ -42,23 +41,36 @@ class _HomePageState extends State<HomePage> {
       });
     }
 
-    Future<List<BookCard>> fetchBooks() async {
-    final response = await http.get(
-        Uri.parse('https://forifbookbugapi.seongjinemong.app/api/books'),
+    Future<List<BookCard>> fetchBooks(String type) async {
+      final uri = Uri.parse(
+        'https://forifbookbugapi.seongjinemong.app/api/books?type=$type'
+        );
+
+      print("[DEBUG] 최종 요청 URI: $uri");
+      print("[DEBUG] 전달된 type 값: $type");
+
+      final response = await http.get(
+        uri,
         headers: {
             'accept': 'application/json',
-            'Content-Type': 'application/json',
             'Authorization': 'Bearer ${widget.token}'
         },
-    );
+      );
 
-    if (response.statusCode == 200) {
-        final List<dynamic> jsonList = jsonDecode(response.body);
-        print(jsonList);
-        return jsonList.map((json) => BookCard.fromJson(json)).toList();
-            } else {
-                throw Exception('책 데이터를 불러오는 데 실패했습니다');
-            }
+      print("[DEBUG] 응답 상태 코드: ${response.statusCode}");
+      print('[DEBUG] 응답 내용: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonMap = jsonDecode(response.body);
+        if (jsonMap is Map<String, dynamic> && jsonMap['books'] is List) {
+          final List<dynamic> booksJson = jsonMap['books'];
+          return booksJson.map((json) => BookCard.fromJson(json)).toList();
+        } else {
+          throw Exception("API 응답 형식이 예상과 다릅니다");
+        }
+      } else {
+        throw Exception('책 데이터를 불러오는 데 실패했습니다 ($type)');
+      }
     }
 
     PreferredSizeWidget? _buildAppBar() {
@@ -72,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                     icon: Icons.search,
                     onPressed: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const SearchPage()),
+                        MaterialPageRoute(builder: (context) => SearchPage(token: widget.token,)),
                         ),
                         iconSize: 24,
                         iconColor: Colors.green[900],
@@ -105,9 +117,9 @@ class _HomePageState extends State<HomePage> {
         case 0:
         return ListView(
             children: [
-                _buildBookSection('주간 Top 10'),
-                _buildBookSection('추천 도서'),
-                _buildBookSection('월간 Top 10'),
+                _buildBookSection('주간 Top 10', 'weekly_top_10'),
+                _buildBookSection('추천 도서', 'recommendation'),
+                _buildBookSection('월간 Top 10', 'monthly_top_10'),
             ],
         );
         case 2:
@@ -117,9 +129,9 @@ class _HomePageState extends State<HomePage> {
         }
     }
 
-    Widget _buildBookSection(String title) {
+    Widget _buildBookSection(String title, String type) {
         return FutureBuilder<List<BookCard>>(
-            future: booksFuture,
+            future: fetchBooks(type),
             builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -128,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text('책이 없습니다.'));
                 }
-                
+
                 final books = snapshot.data!;
                 return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,8 +148,8 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                             padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
                             child: Text(
-                            title,
-                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              title,
+                              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                             ),
                         ),
                         SizedBox(
