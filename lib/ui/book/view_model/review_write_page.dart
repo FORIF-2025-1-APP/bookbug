@@ -100,9 +100,14 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
         'Authorization': 'Bearer ${widget.token}',
       },
     );
+    if (responsebook.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('책이 추가되었습니다')),
+      );
+    }
 
-    final resId = await http.post(
-      Uri.parse('$baseUrl/api/books?isbn=$_selectedBookIsbn'),
+    final resId = await http.get(
+      Uri.parse('$baseUrl/api/books/isbn/$_selectedBookIsbn'),
       headers: {
         'Authorization': 'Bearer ${widget.token}',
       },
@@ -110,12 +115,6 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
     if (resId.statusCode == 200) {
       _selectedBookId = jsonDecode(resId.body)['id'];
       debugPrint(_selectedBookId);
-    }
-
-    if (responsebook.statusCode == 201) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('책이 추가되었습니다')),
-      );
     }
 
     final response = await http.post(
@@ -138,7 +137,7 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('리뷰가 등록되었습니다')));
       Navigator.pop(context);
     } else {
-      debugPrint('리뷰 등록 실패: ${response.body}');
+      debugPrint('리뷰 등록 실패: ${response.statusCode} ${response.body}');
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('리뷰 등록에 실패했습니다')));
     }
   }
