@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BookCard extends StatelessWidget {
+  final String id;
   final String title;
   final String author;
   final double rating;
@@ -9,6 +10,7 @@ class BookCard extends StatelessWidget {
 
   const BookCard({
     super.key,
+    required this.id,
     required this.title,
     required this.author,
     required this.rating,
@@ -17,28 +19,35 @@ class BookCard extends StatelessWidget {
   });
 
   factory BookCard.fromJson(Map<String, dynamic> json) {
-    return BookCard(
-      title: json['title'] ?? '제목 없음',
-      author: json['author'] ?? '작자 미상',
-      rating: (json['rating'] ?? 0).toDouble(),
-      imageUrl: json['imageUrl'] ?? 'https://via.placeholder.com/150x200',
-    );
+  String id = json['id'] ?? '';
+  if (id.isEmpty) {
+    print("[ERROR] Book ID is empty for book: ${json['title']}");
   }
+  return BookCard(
+    id: id.isEmpty ? 'default-id-${DateTime.now().millisecondsSinceEpoch}' : id,
+    title: json['title'] ?? '제목 없음',
+    author: json['author'] ?? '작자 미상',
+    rating: (json['rating'] ?? 0).toDouble(),
+    imageUrl: json['image'] ?? 'https://via.placeholder.com/150x200',
+  );
+}
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 180,
-        height: 350,
+        height: 360,
         margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: const Color(0xFFF0EFE1), // 연한 베이지색 배경
+          color: colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(12.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(25),
+              color: colorScheme.shadow.withAlpha(25),
               blurRadius: 4.0,
               offset: const Offset(0, 2),
             ),
@@ -51,7 +60,7 @@ class BookCard extends StatelessWidget {
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12.0)),
               child: AspectRatio(
-                aspectRatio: 0.9, // 책 표지 비율 조정
+                aspectRatio: 0.8,
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
@@ -67,48 +76,49 @@ class BookCard extends StatelessWidget {
               ),
             ),
             // 책 정보
-            Expanded( 
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 제목
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  // 저자
+                  Text(
+                    author,
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: Colors.grey[700],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      author,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[700],
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          RatingStars(rating: rating),
-                          const SizedBox(width: 6),
-                          Text(
-                          rating.toString(),
-                          style: TextStyle(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  // 별점
+                  // Row(
+                  //   children: [
+                  //     RatingStars(rating: rating),
+                  //     const SizedBox(width: 6),
+                  //     Text(
+                  //       rating.toString(),
+                  //       style: TextStyle(
+                  //         fontSize: 9,
+                  //         fontWeight: FontWeight.w500,
+                  //         color: Colors.grey[700],
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                ],
               ),
             ),
           ],
@@ -139,7 +149,6 @@ class RatingStars extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(5, (index) {
         return Icon(
-          // 전체, 반, 빈 별 아이콘 결정
           (index + 1) <= rating
             ? Icons.star
             : (rating - index >= 0.5)

@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:bookbug/ui/core/ui/input_base.dart';
 import 'package:bookbug/ui/core/ui/button_base.dart';
 import 'package:bookbug/ui/core/ui/checkbox_base.dart';
-import 'package:bookbug/ui/core/ui/backbutton_base.dart';
+import 'package:bookbug/ui/core/ui/top_base.dart';
 import 'package:bookbug/ui/login/view_model/login_page.dart';
 import 'package:bookbug/ui/login/widgets/register_policy_modal.dart';
 
@@ -93,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
       );
     } else if (response.statusCode == 400) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('입력값을 확인해주세요.')),
+        const SnackBar(content: Text('이미 존재하는 이메일입니다.')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -105,17 +105,14 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: BackButtonBase(
-          onPressed: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const LoginPage()),
-            );
-          },
-        ),
-        title: const Text('회원가입'),
-        elevation: 1,
-      ),
+      appBar: TopBaseAppBar(
+      title: '회원가입',
+      onBack: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
+      },
+    ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),

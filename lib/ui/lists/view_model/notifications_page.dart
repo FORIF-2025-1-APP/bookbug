@@ -30,23 +30,25 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<void> _handleNotificationTap(int id) async {
+    if (!mounted) return;
     showDialog(
       context: context,
-      builder: (context) => PopUpCard(
+      builder: (dialogcontext) => PopUpCard(
         title: '알림 확인',
         description: '이 알림을 읽음 처리할까요?',
         leftButtonText: '네',
         rightButtonText: '아니오',
-        onRightPressed: () => Navigator.of(context).pop(),
+        onRightPressed: () => Navigator.of(dialogcontext).pop(),
         onLeftPressed: () async {
-          Navigator.of(context).pop();
+          Navigator.of(dialogcontext).pop();
           await ApiService.markNotificationRead(id);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('읽음 처리 완료')),
-            );
-            setState(() => _notificationsFuture = ApiService.getNotifications());
-          }
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('읽음 처리 완료')),
+          );
+          setState(() {
+            _notificationsFuture = ApiService.getNotifications();
+          });
         },
       ),
     );

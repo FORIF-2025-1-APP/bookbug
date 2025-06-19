@@ -1,5 +1,5 @@
 class Book {
-  final int id;
+  final String id;
   final String title;
   final String author;
   final String publisher;
@@ -19,7 +19,7 @@ class Book {
 
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
-      id: json['id'], 
+      id: json['id'] ?? '', 
       title: json['title'] ?? '', 
       author: json['author'] ?? '', 
       publisher: json['publisher'] ?? '', 

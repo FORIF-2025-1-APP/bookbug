@@ -6,7 +6,9 @@ import 'package:bookbug/data/model/review_model.dart';
 import 'package:bookbug/ui/book/view_model/book_review_detail_page.dart';
 
 class LinkedListPage extends StatefulWidget {
-  const LinkedListPage({super.key});
+  final String token;
+
+  const LinkedListPage({super.key, required this.token});
 
   @override
   State<LinkedListPage> createState() => _LinkedListPageState();
@@ -59,7 +61,11 @@ class _LinkedListPageState extends State<LinkedListPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => BookReviewDetailPage(reviewId: review.id, bookId: review.bookId),
+                        builder: (_) => BookReviewDetailPage(
+                          reviewId: (review.id).toString(),
+                          bookId: (review.bookId).toString(),
+                          token: widget.token
+                        ),
                       ),
                     );
                   },

@@ -6,8 +6,9 @@ import 'package:bookbug/ui/core/ui/profileimage_base.dart';
 
 class BookReplyDetailPage extends StatefulWidget {
   final String replyId;
+  final String token;
 
-  const BookReplyDetailPage({super.key, required this.replyId});
+  const BookReplyDetailPage({super.key, required this.replyId, required this.token});
 
   @override
   State<BookReplyDetailPage> createState() => _BookReplyDetailPageState();
@@ -29,8 +30,20 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
 
   Future<void> _loadReplyAndComments() async {
     try {
-      final replyRes = await http.get(Uri.parse('$baseUrl/api/replies/${widget.replyId}'));
-      final commentRes = await http.get(Uri.parse('$baseUrl/api/comments/reply/${widget.replyId}'));
+      final replyRes = await http.get(
+        Uri.parse('$baseUrl/api/replies/${widget.replyId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
+      final commentRes = await http.get(
+        Uri.parse('$baseUrl/api/comments/reply/${widget.replyId}'),
+          headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
 
       if (replyRes.statusCode == 200 && commentRes.statusCode == 200) {
         setState(() {
@@ -54,7 +67,10 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/comments'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
         body: jsonEncode({
           'replyId': widget.replyId,
           'content': content,
@@ -93,7 +109,10 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
               try {
                 final response = await http.patch(
                   Uri.parse('$baseUrl/api/replies/${widget.replyId}'),
-                  headers: {'Content-Type': 'application/json'},
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ${widget.token}'
+                  },
                   body: jsonEncode({'content': newContent}),
                 );
 
@@ -137,6 +156,10 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
       try {
         final response = await http.delete(
           Uri.parse('$baseUrl/api/replies/${widget.replyId}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${widget.token}'
+          },
         );
 
         if (response.statusCode == 200) {

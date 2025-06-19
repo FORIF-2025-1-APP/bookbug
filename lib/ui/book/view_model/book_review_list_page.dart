@@ -7,8 +7,9 @@ import 'package:bookbug/ui/book/view_model/book_review_detail_page.dart';
 
 class BookReviewListPage extends StatefulWidget {
   final String bookId;
+  final String token;
 
-  const BookReviewListPage({super.key, required this.bookId});
+  const BookReviewListPage({super.key, required this.bookId, required this.token});
 
   @override
   State<BookReviewListPage> createState() => _BookReviewListPageState();
@@ -25,7 +26,13 @@ class _BookReviewListPageState extends State<BookReviewListPage> {
 
   Future<List<dynamic>> fetchReviews() async {
     final url = Uri.parse('$baseUrl/api/reviews?bookId=${widget.bookId}&sort=$_sort');
-    final response = await http.get(url);
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}'
+      },
+    );
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -95,6 +102,7 @@ class _BookReviewListPageState extends State<BookReviewListPage> {
                       builder: (context) => BookReviewDetailPage(
                         bookId: widget.bookId,
                         reviewId: review['id'],
+                        token: widget.token
                       ),
                     ),
                   );

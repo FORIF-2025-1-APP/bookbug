@@ -8,9 +8,11 @@ import 'dart:convert';
 
 class BookDetailPage extends StatefulWidget{
   final String bookId;
+  final String token;
   const BookDetailPage({
     super.key,
-    required this.bookId
+    required this.bookId,
+    required this.token
   });
 
   @override
@@ -32,7 +34,13 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Future<void> _fetchBookDetail() async {
     final url = Uri.parse('$baseUrl/api/books/${widget.bookId}');
     try {
-      final response = await http.get(url);
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -59,7 +67,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
         url,
         headers: {
           'Content-Type': 'application/json',
-          //'Authorization': 'Bearer YOUR_ACCESS_TOKEN', // 필요 시 추가
+          'Authorization': 'Bearer ${widget.token}'
         },
         body: jsonEncode({
           'bookId': widget.bookId, // 실제 책 ID 사용
@@ -89,7 +97,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
         url,
         headers: {
           'Content-Type': 'application/json',
-          //'Authorization': 'Bearer YOUR_ACCESS_TOKEN', // 필요 시 추가
+          'Authorization': 'Bearer ${widget.token}'
         },
         body: jsonEncode({
           'bookId': widget.bookId,
@@ -242,6 +250,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                           builder: (context) => BookReviewDetailPage(
                             bookId: widget.bookId,
                             reviewId: review['id'],
+                            token: widget.token
                           ),
                         ),
                       );
@@ -256,7 +265,10 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BookReviewListPage(bookId: widget.bookId),
+                        builder: (context) => BookReviewListPage(
+                          bookId: widget.bookId,
+                          token: widget.token
+                        ),
                       ),
                     );
                   },

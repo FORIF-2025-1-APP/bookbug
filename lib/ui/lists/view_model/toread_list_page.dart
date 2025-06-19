@@ -5,7 +5,9 @@ import 'package:bookbug/data/model/book_model.dart';
 import 'package:bookbug/data/services/api_service.dart';
 
 class ToreadListPage extends StatefulWidget {
-  const ToreadListPage({super.key});
+  final String token;
+
+  const ToreadListPage({super.key, required this.token});
 
   @override
   State<ToreadListPage> createState() => _ToreadListPageState();
