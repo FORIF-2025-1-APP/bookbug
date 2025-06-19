@@ -85,7 +85,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
 
   Future<void> _toggleLike() async {
     try {
-      final url = Uri.parse('$baseUrl/api/reviews/${widget.reviewId}/like');
+      final url = Uri.parse('$baseUrl/api/reviews/like/${widget.reviewId}');
       final response = isLiked
           ? await http.delete(url)
           : await http.post(url);

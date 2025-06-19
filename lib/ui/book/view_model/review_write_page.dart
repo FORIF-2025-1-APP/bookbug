@@ -22,6 +22,7 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
   final TextEditingController controllerTag = TextEditingController();
   double _rating = 0.0;
   List<String> _tags = [];
+  String? _selectedBookIsbn;
   String? _selectedBookId;
   Map<String, dynamic>? _selectedBookData;
   final String baseUrl = 'https://forifbookbugapi.seongjinemong.app';
@@ -88,9 +89,33 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
   }
 
   Future<void> _submitReview() async {
-    if (_selectedBookId == null) {
+    if (_selectedBookIsbn == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('책을 먼저 선택해주세요')));
       return;
+    }
+
+    final responsebook = await http.post(
+      Uri.parse('$baseUrl/api/books?isbn=$_selectedBookIsbn'),
+      headers: {
+        'Authorization': 'Bearer ${widget.token}',
+      },
+    );
+
+    final resId = await http.post(
+      Uri.parse('$baseUrl/api/books?isbn=$_selectedBookIsbn'),
+      headers: {
+        'Authorization': 'Bearer ${widget.token}',
+      },
+    );
+    if (resId.statusCode == 200) {
+      _selectedBookId = jsonDecode(resId.body)['id'];
+      debugPrint(_selectedBookId);
+    }
+
+    if (responsebook.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('책이 추가되었습니다')),
+      );
     }
 
     final response = await http.post(
@@ -102,7 +127,7 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
       body: jsonEncode({
         'bookId': _selectedBookId,
         'title': controllerTitle.text.trim(),
-        'content': controllerMain.text.trim(),
+        'description': controllerMain.text.trim(),
         'rating': _rating,
         'tags': _tags,
       }),
@@ -230,7 +255,7 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
 
     if (selected != null) {
       setState(() {
-        _selectedBookId = selected['isbn'];
+        _selectedBookIsbn = selected['isbn'];
         _selectedBookData = selected;
       });
     }
