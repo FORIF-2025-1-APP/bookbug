@@ -192,7 +192,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Widget reviewsection(BuildContext context, String title) {
     return FutureBuilder<http.Response>(
       future: http.get(
-        Uri.parse('$baseUrl/api/reviews?bookId=${widget.bookId}&limit=2'),
+        Uri.parse('$baseUrl/api/reviews/book/${widget.bookId}&limit=2'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -236,13 +236,13 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 itemBuilder: (context, index) {
                   final review = jsonData[index];
                   return ListItem(
-                    nickname: review['nickname'] ?? '',
-                    title: review['title'] ?? '',
+                    nickname: review['user']['username'] ?? '',
+                    title: review['title'] ?? '',//주의
                     content: review['content'] ?? '',
-                    leadingText: review['nickname'] != null && review['nickname'].isNotEmpty
-                        ? review['nickname'][0]
+                    leadingText: review['user']['username'] != null && review['user']['username'].isNotEmpty
+                        ? review['user']['username']
                         : '?',
-                    trailingText: '${review['likeCount'] ?? 0}',
+                    trailingText: '${review['likeCount'] ?? 0}',//주의
                     onTap: () {
                       Navigator.push(
                         context,

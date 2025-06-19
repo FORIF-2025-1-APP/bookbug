@@ -206,7 +206,7 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(replyData?['nickname'] ?? '익명',
+                          Text(replyData?['userId'] ?? '익명',
                               style: const TextStyle(fontSize: 12, color: Colors.black)),
                           const SizedBox(height: 4),
                           Text(replyData?['content'] ?? '',
@@ -237,11 +237,11 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
                             itemBuilder: (context, index) {
                               final comment = comments[index];
                               return ListItem(
-                                nickname: comment['writer']['nickname'] ?? '익명',
+                                nickname: comment['userId'] ?? '익명',
                                 title: '',
-                                content: comment['content'] ?? '',
+                                content: comment['comment'] ?? '',
                                 trailingText: comment['createdAt']?.split('T').first ?? '',
-                                leadingText: (comment['writer']['nickname']?[0] ?? 'U').toUpperCase(),
+                                leadingText: (comment['userId']?[0] ?? 'U').toUpperCase(),
                               );
                             },
                           ),

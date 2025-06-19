@@ -43,7 +43,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
   Future<void> _loadData() async {
     try {
       final reviewRes = await http.get(
-        Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
+        Uri.parse('$baseUrl/api/reviews/book/${widget.bookId}?id=${widget.reviewId}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${widget.token}'
@@ -184,7 +184,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 if (newTitle.isEmpty || newContent.isEmpty) return;
 
                 try {
-                  final response = await http.patch(
+                  final response = await http.put(
                     Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
                     headers: {
                       'Content-Type': 'application/json',
@@ -192,7 +192,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                     },
                     body: jsonEncode({
                       'title': newTitle,
-                      'content': newContent,
+                      'description': newContent,
                       'rating': rating,
                       'tags': tags,
                     }),
@@ -267,11 +267,11 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 children: [
                   // 책 정보
                   BookinfoBase(
-                    imageProvider: NetworkImage(bookData?['coverImageUrl'] ?? ''),
+                    imageProvider: NetworkImage(bookData?['coverImage'] ?? ''),
                     author: bookData?['author'] ?? '',
                     title: bookData?['title'] ?? '',
-                    publisher: bookData?['publisher'] ?? '',
-                    pubDate: bookData?['publicationDate'] ?? '',
+                    publisher: bookData?['publisher'] ?? '',//주의
+                    pubDate: bookData?['createdAt'] ?? '',
                     review: reviewData?['content'] ?? '',
                   ),
                   const SizedBox(height: 16),
@@ -281,11 +281,11 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                       ProfileimageBase(
                         width: 40,
                         height: 40,
-                        image: reviewData?['writer']['profileImageUrl'] ?? '',
+                        image: reviewData?['user']['profileImageUrl'] ?? '',//주의
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        reviewData?['writer']['nickname'] ?? '익명',
+                        reviewData?['user']['username'] ?? '익명',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -371,10 +371,10 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
             itemBuilder: (context, index) {
               final reply = replies[index];
               return ListItem(
-                nickname: reply['nickname'] ?? '',
+                nickname: reply['userId'] ?? '',
                 title: '',
                 content: reply['content'] ?? '',
-                leadingText: (reply['nickname'] ?? 'U')[0].toUpperCase(),
+                leadingText: (reply['userId'] ?? 'U')[0].toUpperCase(),
                 trailingText: reply['createdAt']?.substring(0, 10) ?? '',
                 onTap: () {
                   Navigator.push(

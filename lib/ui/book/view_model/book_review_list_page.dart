@@ -25,7 +25,7 @@ class _BookReviewListPageState extends State<BookReviewListPage> {
   };
 
   Future<List<dynamic>> fetchReviews() async {
-    final url = Uri.parse('$baseUrl/api/reviews?bookId=${widget.bookId}&sort=$_sort');
+    final url = Uri.parse('$baseUrl/api/reviews/book/${widget.bookId}&sort=$_sort');
     final response = await http.get(
       url,
       headers: {
@@ -90,11 +90,11 @@ class _BookReviewListPageState extends State<BookReviewListPage> {
             itemBuilder: (context, index) {
               final review = reviews[index];
               return ListItem(
-                nickname: review['nickname'] ?? '',
+                nickname: review['user']['username'] ?? '',
                 title: review['title'] ?? '',
                 content: review['content'] ?? '',
                 trailingText: review['createdAt']?.substring(0, 10) ?? '',
-                leadingText: (review['nickname'] ?? 'U')[0].toUpperCase(),
+                leadingText: (review['user']['username'] ?? 'U')[0].toUpperCase(),
                 onTap: () {
                   Navigator.push(
                     context,

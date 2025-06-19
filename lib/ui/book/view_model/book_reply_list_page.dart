@@ -65,8 +65,8 @@ class _BookReplyListPageState extends State<BookReplyListPage> {
                     'Authorization': 'Bearer ${widget.token}'
                   },
                   body: jsonEncode({
-                    'reviewId': widget.reviewId,
                     'reply': content,
+                    'reviewId': widget.reviewId,
                   }),
                 );
 
@@ -120,11 +120,11 @@ class _BookReplyListPageState extends State<BookReplyListPage> {
             itemBuilder: (context, index) {
               final reply = replies[index];
               return ListItem(
-                nickname: reply['nickname'] ?? '',
+                nickname: reply['userId'] ?? '',
                 title: '',
                 content: reply['content'] ?? '',
                 trailingText: reply['createdAt']?.substring(0, 10) ?? '',
-                leadingText: (reply['nickname'] ?? '?')[0].toUpperCase(),
+                leadingText: (reply['userId'] ?? '?')[0].toUpperCase(),
                 onTap: () {
                   Navigator.push(
                     context,
