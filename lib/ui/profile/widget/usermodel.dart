@@ -1,3 +1,28 @@
+class Book {
+  final String id;
+  final String title;
+  final String author;
+  final double rating;
+  final String imageUrl;
+
+  Book({
+    required this.id,
+    required this.author,
+    required this.imageUrl,
+    required this.rating,
+    required this.title,
+  });
+  factory Book.fromJson(Map<String, dynamic> json) {
+    return Book(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      author: json['author'] as String,
+      rating: (json['rating'] as num).toDouble(),
+      imageUrl: json['imageUrl'] as String,
+    );
+  }
+}
+
 class User {
   final String id;
   final String email;
@@ -5,6 +30,7 @@ class User {
   final String role;
   final DateTime createdAt;
   final String? image;
+  final Book? favoriteBook;
 
   User({
     required this.id,
@@ -13,6 +39,7 @@ class User {
     required this.role,
     required this.createdAt,
     this.image,
+    this.favoriteBook,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -40,6 +67,13 @@ class User {
     // image는 nullable
     final image = data['image']?.toString();
 
+    Book? favorite;
+    if (data.containsKey('favoriteBook') && data['favoriteBook'] != null) {
+      favorite = Book.fromJson(data['favoriteBook'] as Map<String, dynamic>);
+    } else {
+      favorite = null;
+    }
+
     return User(
       id: id,
       email: email,
@@ -47,6 +81,7 @@ class User {
       role: role,
       createdAt: parsedCreated,
       image: image,
+      favoriteBook: favorite,
     );
   }
 }
