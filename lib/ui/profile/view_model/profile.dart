@@ -247,93 +247,30 @@ class _ProfileState extends State<Profile> {
 
   // Original UI functions
   Widget booksection(BuildContext context, String title, User user) {
-    final fav = user.favoriteBook;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
+          padding: const EdgeInsets.fromLTRB(14, 24, 16, 12),
           child: Text(
             title,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
+
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: SizedBox(
-            height: 260,
-            width: 160,
-            child:
-                fav != null
-                    ? GestureDetector(
-                      onTap: () {
-                        final token = context.read<AuthProvider>().token;
-                        if (token != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) => BookDetailPage(
-                                    bookId: fav.id,
-                                    token: token,
-                                  ),
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('로그인된 토큰이 없습니다.')),
-                          );
-                        }
-                      },
-                      child: BookCard(
-                        id: fav.id,
-                        title: fav.title,
-                        author: fav.author,
-                        rating: fav.rating,
-                        imageUrl: fav.imageUrl,
-                        onTap: () {
-                          final token = context.read<AuthProvider>().token;
-                          if (token != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (_) => BookDetailPage(
-                                      bookId: fav.id,
-                                      token: token,
-                                    ),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('로그인된 토큰이 없습니다.')),
-                            );
-                          }
-                        },
-                      ),
-                    )
-                    : Container(
-                      height: 260,
-                      width: 160,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(25),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text(
-                          '최애 책이 없습니다.\n수정 화면에서 설정하세요.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    ),
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            width: 160, // 원하는 가로 크기
+            height: 260, // 원하는 세로 크기
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12), // 모서리 둥글게
+              image: DecorationImage(
+                image: AssetImage('assets/book.jpeg'),
+                fit: BoxFit.cover, // Container 크기에 맞춰 자르거나 꽉 채움
+                alignment: Alignment.center,
+              ),
+            ),
           ),
         ),
       ],
@@ -372,7 +309,10 @@ class _ProfileState extends State<Profile> {
               children: [
                 SizedBox(
                   height: 200,
-                  child: BadgebuttonBase(badge: badgeAsset, badgename: '시작이 반이다'),
+                  child: BadgebuttonBase(
+                    badge: badgeAsset,
+                    badgename: '시작이 반이다',
+                  ),
                 ),
                 const Spacer(),
                 SizedBox(
