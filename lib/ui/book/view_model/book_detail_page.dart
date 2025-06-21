@@ -189,24 +189,35 @@ class _BookDetailPageState extends State<BookDetailPage> {
     );
   }
 
+  Future<List<dynamic>> fetchReviews() async {
+    final url = Uri.parse('$baseUrl/api/reviews/book/${widget.bookId}');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final decodedData = jsonDecode(response.body).sublist(0, 2);
+      return decodedData;
+    } else {
+      throw Exception('리뷰 데이터를 불러오지 못했습니다: ${response.body}');
+    }
+  }
+
   Widget reviewsection(BuildContext context, String title) {
-    return FutureBuilder<http.Response>(
-      future: http.get(
-        Uri.parse('$baseUrl/api/reviews/book/${widget.bookId}&limit=2'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      ),
+    return FutureBuilder<List<dynamic>>(
+      future: fetchReviews(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Text('리뷰를 불러오는 중 오류가 발생했습니다.');
-        } else if (!snapshot.hasData || snapshot.data!.statusCode != 200) {
-          return Text('리뷰 데이터를 불러올 수 없습니다.');
         }
 
-        final List<dynamic> jsonData = jsonDecode(snapshot.data!.body);
+        final List<dynamic> jsonData = snapshot.data!;
         if (jsonData.isEmpty) {
           return Text('아직 등록된 리뷰가 없습니다.');
         }
