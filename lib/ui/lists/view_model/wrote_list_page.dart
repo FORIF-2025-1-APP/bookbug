@@ -91,8 +91,8 @@ class _WroteListPageState extends State<WroteListPage> {
                       context,
                       MaterialPageRoute(
                         builder: (_) => BookReviewDetailPage(
-                          reviewId: (review.id).toString(),
-                          bookId: (review.bookId).toString(),
+                          reviewId: review['id'],
+                          bookId: review['bookId'],
                           token: widget.token
                         ),
                       ),
