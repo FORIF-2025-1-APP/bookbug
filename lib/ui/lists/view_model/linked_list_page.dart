@@ -76,7 +76,7 @@ class _LinkedListPageState extends State<LinkedListPage> {
                         builder: (_) => BookReviewDetailPage(
                           reviewId: review['id'],
                           bookId: review['bookId'],
-                          token: widget.token
+                          token: widget.token//wjd
                         ),
                       ),
                     );
