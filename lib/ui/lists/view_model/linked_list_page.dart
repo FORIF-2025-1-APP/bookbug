@@ -1,9 +1,9 @@
 import 'package:bookbug/ui/lists/widgets/empty_review_message.dart';
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:flutter/material.dart';
-import 'package:bookbug/data/services/api_service.dart';
-import 'package:bookbug/data/model/review_model.dart';
 import 'package:bookbug/ui/book/view_model/book_review_detail_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LinkedListPage extends StatefulWidget {
   final String token;
@@ -15,12 +15,24 @@ class LinkedListPage extends StatefulWidget {
 }
 
 class _LinkedListPageState extends State<LinkedListPage> {
-  Future<List<Review>>? _likedReviewsFuture;
+  final String baseUrl = 'https://forifbookbugapi.seongjinemong.app';
 
-  @override
-  void initState() {
-    super.initState();
-    _likedReviewsFuture = ApiService.getLikedReviews();
+  Future<List<dynamic>> fetchReviews() async {
+    final url = Uri.parse('$baseUrl/api/user');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}'
+      },
+    );
+    if (response.statusCode == 200) {
+      final decodedData = jsonDecode(response.body);
+      final String likedList = decodedData['likedReviews'];
+      return jsonDecode(likedList);
+    } else {
+      throw Exception('데이터를 불러오지 못했습니다: ${response.body}');
+    }
   }
 
   @override
@@ -33,8 +45,8 @@ class _LinkedListPageState extends State<LinkedListPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: FutureBuilder<List<Review>>(
-        future: _likedReviewsFuture,
+      body: FutureBuilder<List<dynamic>>(
+        future: fetchReviews(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -50,20 +62,20 @@ class _LinkedListPageState extends State<LinkedListPage> {
               itemBuilder: (context, index) {
                 final review = likedReviews[index];
                 return ListItem(
-                  nickname: review.nickname,
-                  title: review.bookTitle,
-                  content: review.reviewPreview,
-                  trailingText: review.createdAt.substring(0, 10),
-                  leadingText: review.nickname.isNotEmpty
-                      ? review.nickname[0].toUpperCase()
+                  nickname: review[''],
+                  title: review['title'],
+                  content: review['description'],
+                  trailingText: review['createdAt'],
+                  leadingText: review['']
+                      ? review[''].toUpperCase()
                       : '',
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => BookReviewDetailPage(
-                          reviewId: (review.id).toString(),
-                          bookId: (review.bookId).toString(),
+                          reviewId: review['id'],
+                          bookId: review['bookId'],
                           token: widget.token
                         ),
                       ),
