@@ -201,7 +201,7 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
                   // 댓글 헤더
                   Row(
                     children: [
-                      ProfileimageBase(image: replyData?['author']['image'] ?? 'assets/images/sample.png'),
+                      ProfileimageBase(image: replyData?['author']['image'] ?? 'assets/defaultimage.png'),
                       const SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

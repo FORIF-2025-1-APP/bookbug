@@ -301,7 +301,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                           height: 40,
                           image:
                               reviewData?['author']['image'] ??
-                              'assets/images/sample.png',
+                              'assets/defaultimage.png',
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -310,7 +310,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color:
-                                Theme.of(context).colorScheme.primaryContainer,
+                                Theme.of(context).colorScheme.scrim,
                           ),
                         ),
                       ],
@@ -322,7 +322,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primaryContainer,
+                        color: Theme.of(context).colorScheme.scrim,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -330,7 +330,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                       reviewData?['description'] ?? '',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Theme.of(context).colorScheme.primaryContainer,
+                        color: Theme.of(context).colorScheme.scrim,
                       ),
                     ),
                     const SizedBox(height: 16),
