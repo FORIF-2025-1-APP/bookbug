@@ -175,7 +175,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                               Wrap(
                                 spacing: 4,
                                 children: (_bookData!['topTags'] as List<dynamic>).take(5).map((tag) {
-                                  return TagBase(tagName: tag.toString());
+                                  return TagBase(tagName: tag['name'].toString());
                                 }).toList(),
                               ),
                           ],

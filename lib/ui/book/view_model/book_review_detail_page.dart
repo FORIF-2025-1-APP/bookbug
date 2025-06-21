@@ -108,7 +108,10 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
       text: reviewData?['description'] ?? '',
     );
     double rating = reviewData?['rating']?.toDouble() ?? 0.0;
-    List<String> tags = List<String>.from(reviewData?['tags']['name'] ?? []);
+    List<String> tags = (reviewData?['tags'] as List<dynamic>? ?? [])
+      .map((tag) => tag['name']?.toString() ?? '')
+      .where((name) => name.isNotEmpty)
+      .toList();
     final tagController = TextEditingController();
 
     showDialog(
@@ -335,10 +338,9 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                     Wrap(
                       spacing: 8,
                       children:
-                          (reviewData?['tags']['name'] as List<dynamic>?)
-                              ?.map((tag) => TagBase(tagName: tag.toString()))
-                              .toList() ??
-                          [],
+                          (reviewData?['tags'] as List<dynamic>?)
+                            ?.map((tag) => TagBase(tagName: tag['name']?.toString() ?? ''))
+                            .toList() ?? []
                     ),
                     const SizedBox(height: 16),
                     // 댓글 섹션
