@@ -21,9 +21,9 @@ class BadgebuttonBase extends StatelessWidget {
           Container(
             width: 60,
             height: 60,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFFEAEAE0),
+              color: Theme.of(context).colorScheme.surface,
             ), // 바깥 회색 원 이 색도 논의해야함.
             child: Center(
               child: Container(

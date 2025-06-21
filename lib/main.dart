@@ -1,3 +1,4 @@
+import 'package:bookbug/ui/core/themes/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bookbug/data/services/token_manager.dart';
@@ -23,6 +24,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => authProvider),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: MyApp(isLoggedIn: isLoggedIn),
     ),
@@ -38,22 +40,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-        final isDarkMode = MediaQuery.platformBrightnessOf(context) == Brightness.dark;
+        final isDarkMode =
+            MediaQuery.platformBrightnessOf(context) == Brightness.dark;
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: '책 리뷰 앱',
           theme: ThemeData(
-            colorScheme: isDarkMode
-                ? MaterialTheme.darkScheme().toColorScheme()
-                : MaterialTheme.lightScheme().toColorScheme(),
+            colorScheme: MaterialTheme.lightScheme().toColorScheme(),
             fontFamily: 'Pretendard',
           ),
+          darkTheme: ThemeData(
+            colorScheme: MaterialTheme.darkScheme().toColorScheme(),
+            fontFamily: 'Pretendard',
+          ),
+          themeMode: Provider.of<ThemeProvider>(context).thememode,
 
           home: SplashWidget(isLoggedIn: isLoggedIn),
           routes: {
             '/login': (context) => const LoginPage(),
-            '/home': (context) => Consumer<AuthProvider>(
+            '/home':
+                (context) => Consumer<AuthProvider>(
                   builder: (context, auth, _) {
                     return HomePage(token: auth.token!);
                   },
