@@ -120,11 +120,11 @@ class _BookReplyListPageState extends State<BookReplyListPage> {
             itemBuilder: (context, index) {
               final reply = replies[index];
               return ListItem(
-                nickname: reply['userId'] ?? '',
+                nickname: reply['author']['username'] ?? '',
                 title: '',
-                content: reply['content'] ?? '',
+                content: reply['reply'] ?? '',
                 trailingText: reply['createdAt']?.substring(0, 10) ?? '',
-                leadingText: (reply['userId'] ?? '?')[0].toUpperCase(),
+                leadingText: (reply['author']['username'] ?? '?')[0].toUpperCase(),
                 onTap: () {
                   Navigator.push(
                     context,

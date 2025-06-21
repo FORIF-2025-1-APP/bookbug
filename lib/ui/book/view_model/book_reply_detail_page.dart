@@ -89,7 +89,7 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
   }
 
   Future<void> _editReply() async {
-    final controller = TextEditingController(text: replyData?['content'] ?? '');
+    final controller = TextEditingController(text: replyData?['reply'] ?? '');
 
     showDialog(
       context: context,
@@ -201,15 +201,15 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
                   // 댓글 헤더
                   Row(
                     children: [
-                      ProfileimageBase(image: 'assets/images/sample.png'),
+                      ProfileimageBase(image: replyData?['author']['image'] ?? 'assets/images/sample.png'),
                       const SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(replyData?['userId'] ?? '익명',
+                          Text(replyData?['author']['username'] ?? '익명',
                               style: const TextStyle(fontSize: 12, color: Colors.black)),
                           const SizedBox(height: 4),
-                          Text(replyData?['content'] ?? '',
+                          Text(replyData?['reply'] ?? '',
                               style: const TextStyle(fontSize: 14, color: Colors.black)),
                         ],
                       ),
@@ -237,11 +237,11 @@ class _BookReplyDetailPageState extends State<BookReplyDetailPage> {
                             itemBuilder: (context, index) {
                               final comment = comments[index];
                               return ListItem(
-                                nickname: comment['userId'] ?? '익명',
+                                nickname: comment['author']['username'] ?? '익명',
                                 title: '',
                                 content: comment['comment'] ?? '',
                                 trailingText: comment['createdAt']?.split('T').first ?? '',
-                                leadingText: (comment['userId']?[0] ?? 'U').toUpperCase(),
+                                leadingText: (comment['author']['username'] ?? 'U').toUpperCase(),
                               );
                             },
                           ),

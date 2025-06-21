@@ -21,7 +21,7 @@ class _BookReviewListPageState extends State<BookReviewListPage> {
   String _sort = 'createdAt'; // 기본 정렬: 최신순
   final Map<String, String> _sortOptions = {
     'createdAt': '최신순',
-    'likeCount': '추천순',
+    'likeCount': '추천순',//확인 요망
   };
 
   Future<List<dynamic>> fetchReviews() async {
@@ -90,11 +90,11 @@ class _BookReviewListPageState extends State<BookReviewListPage> {
             itemBuilder: (context, index) {
               final review = reviews[index];
               return ListItem(
-                nickname: review['user']['username'] ?? '',
+                nickname: review['author']['username'] ?? '',
                 title: review['title'] ?? '',
-                content: review['content'] ?? '',
-                trailingText: review['createdAt']?.substring(0, 10) ?? '',
-                leadingText: (review['user']['username'] ?? 'U')[0].toUpperCase(),
+                content: review['description'] ?? '',
+                trailingText: '${review['_count']['likedBy'] ?? 0}',
+                leadingText: (review['author']['username'] ?? 'U')[0].toUpperCase(),
                 onTap: () {
                   Navigator.push(
                     context,

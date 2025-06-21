@@ -43,7 +43,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
   Future<void> _loadData() async {
     try {
       final reviewRes = await http.get(
-        Uri.parse('$baseUrl/api/reviews/book/${widget.bookId}?id=${widget.reviewId}'),
+        Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${widget.token}'
@@ -267,12 +267,12 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 children: [
                   // 책 정보
                   BookinfoBase(
-                    imageProvider: NetworkImage(bookData?['coverImage'] ?? ''),
+                    imageProvider: NetworkImage(bookData?['image'] ?? ''),
                     author: bookData?['author'] ?? '',
                     title: bookData?['title'] ?? '',
                     publisher: bookData?['publisher'] ?? '',//주의
-                    pubDate: bookData?['createdAt'] ?? '',
-                    review: reviewData?['content'] ?? '',
+                    pubDate: bookData?['pubDate'] ?? '',
+                    review: reviewData?['description'] ?? '',
                   ),
                   const SizedBox(height: 16),
                   // 작성자 정보
@@ -281,11 +281,11 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                       ProfileimageBase(
                         width: 40,
                         height: 40,
-                        image: reviewData?['user']['profileImageUrl'] ?? '',//주의
+                        image: reviewData?['author']['image'] ?? 'assets/images/sample.png',
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        reviewData?['user']['username'] ?? '익명',
+                        reviewData?['author']['username'] ?? '익명',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -371,10 +371,10 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
             itemBuilder: (context, index) {
               final reply = replies[index];
               return ListItem(
-                nickname: reply['userId'] ?? '',
+                nickname: reply['author']['username'] ?? '',
                 title: '',
-                content: reply['content'] ?? '',
-                leadingText: (reply['userId'] ?? 'U')[0].toUpperCase(),
+                content: reply['reply'] ?? '',
+                leadingText: (reply['userId']['username'] ?? 'U')[0].toUpperCase(),
                 trailingText: reply['createdAt']?.substring(0, 10) ?? '',
                 onTap: () {
                   Navigator.push(

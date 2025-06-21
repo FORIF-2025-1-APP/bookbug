@@ -156,8 +156,8 @@ class _BookDetailPageState extends State<BookDetailPage> {
                                 shape: BoxShape.rectangle,
                                 borderRadius: BorderRadius.all(Radius.circular(8)),
                               ),
-                              child: _bookData!['coverImage'] != null
-                                  ? Image.network(_bookData!['coverImage'], width: 116, height: 163, fit: BoxFit.cover)
+                              child: _bookData!['image'] != null
+                                  ? Image.network(_bookData!['image'], width: 116, height: 163, fit: BoxFit.cover)
                                   : Placeholder(fallbackHeight: 163, fallbackWidth: 116),
                             ),
                             SizedBox(height: 20),
@@ -171,10 +171,10 @@ class _BookDetailPageState extends State<BookDetailPage> {
                               style: TextStyle(fontSize: 14, color: Colors.black),
                             ),
                             SizedBox(height: 10),
-                            if (_bookData!['tags'] != null && _bookData!['tags'] is List)
+                            if (_bookData!['topTags'] != null && _bookData!['topTags'] is List)
                               Wrap(
                                 spacing: 4,
-                                children: (_bookData!['tags'] as List<dynamic>).take(5).map((tag) {
+                                children: (_bookData!['topTags'] as List<dynamic>).take(5).map((tag) {
                                   return TagBase(tagName: tag.toString());
                                 }).toList(),
                               ),
@@ -236,13 +236,13 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 itemBuilder: (context, index) {
                   final review = jsonData[index];
                   return ListItem(
-                    nickname: review['user']['username'] ?? '',
-                    title: review['title'] ?? '',//주의
-                    content: review['content'] ?? '',
-                    leadingText: review['user']['username'] != null && review['user']['username'].isNotEmpty
-                        ? review['user']['username']
+                    nickname: review['author']['username'] ?? '',
+                    title: review['title'] ?? '',
+                    content: review['description'] ?? '',
+                    leadingText: review['author']['username'] != null && review['author']['username'].isNotEmpty
+                        ? review['author']['username']
                         : '?',
-                    trailingText: '${review['likeCount'] ?? 0}',//주의
+                    trailingText: '${review['_count']['likedBy'] ?? 0}',
                     onTap: () {
                       Navigator.push(
                         context,
