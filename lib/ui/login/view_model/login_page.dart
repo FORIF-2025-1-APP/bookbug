@@ -60,9 +60,7 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => HomePage(token: token),
-        ),
+        MaterialPageRoute(builder: (_) => HomePage(token: token)),
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,82 +79,80 @@ class _LoginPageState extends State<LoginPage> {
 
   // 구글 로그인
   Future<void> loginWithGoogle() async {
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-  try {
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    try {
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (googleUser == null) {
-      throw Exception('구글 로그인에 실패했습니다.');
-    }
-
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final String? idToken = googleAuth.accessToken;
-
-    print('Google User: ${googleUser.displayName}');
-    print('Google ID Token: $idToken');
-
-
-
-    final apiUrl = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/auth/google');
-    final apiResponse = await http.post(
-      apiUrl,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'idToken': idToken}),
-    );
-
-    print('Google Login Response Status Code: ${apiResponse.statusCode}');
-    print('Google Login Response Body: ${apiResponse.body}');
-
-    if (!mounted) return;
-
-    if (apiResponse.statusCode == 200) {
-      final responseData = jsonDecode(apiResponse.body);
-      final token = responseData['token'];
-      final user = responseData['user'];
-
-      // AuthProvider에 토큰 저장
-      await context.read<AuthProvider>().setToken(token);
-
-      if (autoLogin) {
-        await TokenManager.saveToken(token);
-        await TokenManager.setAutoLogin(true);
-      } else {
-        await TokenManager.setAutoLogin(false);
-        await TokenManager.clearToken();
+      if (googleUser == null) {
+        throw Exception('구글 로그인에 실패했습니다.');
       }
 
-      Navigator.pushReplacement(
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final String? idToken = googleAuth.accessToken;
+
+      print('Google User: ${googleUser.displayName}');
+      print('Google ID Token: $idToken');
+
+      final apiUrl = Uri.parse(
+        'https://forifbookbugapi.seongjinemong.app/api/auth/google',
+      );
+      final apiResponse = await http.post(
+        apiUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'idToken': idToken}),
+      );
+
+      print('Google Login Response Status Code: ${apiResponse.statusCode}');
+      print('Google Login Response Body: ${apiResponse.body}');
+
+      if (!mounted) return;
+
+      if (apiResponse.statusCode == 200) {
+        final responseData = jsonDecode(apiResponse.body);
+        final token = responseData['token'];
+        final user = responseData['user'];
+
+        // AuthProvider에 토큰 저장
+        await context.read<AuthProvider>().setToken(token);
+
+        if (autoLogin) {
+          await TokenManager.saveToken(token);
+          await TokenManager.setAutoLogin(true);
+        } else {
+          await TokenManager.setAutoLogin(false);
+          await TokenManager.clearToken();
+        }
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => HomePage(token: token)),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${user['username']} 님, 오늘도 책 읽을 준비 되셨나요?')),
+        );
+      } else if (apiResponse.statusCode == 401) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('구글 로그인 실패: 잘못된 토큰')));
+      } else if (apiResponse.statusCode == 500) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('구글 로그인 실패: 서버 오류')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('구글 로그인 실패: ${apiResponse.statusCode}')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      print('Google Sign-In Exception: $e');
+      ScaffoldMessenger.of(
         context,
-        MaterialPageRoute(
-          builder: (_) => HomePage(token: token),
-        ),
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${user['username']} 님, 오늘도 책 읽을 준비 되셨나요?')),
-      );
-    } else if (apiResponse.statusCode == 401) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('구글 로그인 실패: 잘못된 토큰')),
-      );
-    } else if (apiResponse.statusCode == 500) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('구글 로그인 실패: 서버 오류')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('구글 로그인 실패: ${apiResponse.statusCode}')),
-      );
+      ).showSnackBar(SnackBar(content: Text('구글 로그인 중 에러 발생: $e')));
     }
-  } catch (e) {
-    if (!mounted) return;
-    print('Google Sign-In Exception: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('구글 로그인 중 에러 발생: $e')),
-    );
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
