@@ -1,8 +1,8 @@
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:flutter/material.dart';
 import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
-import 'package:bookbug/data/model/book_model.dart';
-import 'package:bookbug/data/services/api_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ToreadListPage extends StatefulWidget {
   final String token;
@@ -14,20 +14,32 @@ class ToreadListPage extends StatefulWidget {
 }
 
 class _ToreadListPageState extends State<ToreadListPage> {
-  Future<List<Book>>? _bookListFuture;
+  final String baseUrl = 'https://forifbookbugapi.seongjinemong.app';
 
-  @override
-  void initState() {
-    super.initState();
-    _bookListFuture = ApiService.getToReadList();
+  Future<List<dynamic>> fetchBooks() async {
+    final url = Uri.parse('$baseUrl/api/user');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}'
+      },
+    );
+    if (response.statusCode == 200) {
+      final decodedData = jsonDecode(response.body);
+      final String readlist = decodedData['readlist'];
+      return jsonDecode(readlist);
+    } else {
+      throw Exception('데이터를 불러오지 못했습니다: ${response.body}');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder<List<Book>>(
-          future: _bookListFuture,
+        title: FutureBuilder<List<dynamic>>(
+          future: fetchBooks(),
           builder: (context, snapshot) {
             final count = snapshot.hasData ? snapshot.data!.length : 0;
             return Text('읽을 책($count)');
@@ -38,8 +50,8 @@ class _ToreadListPageState extends State<ToreadListPage> {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: FutureBuilder<List<Book>>(
-        future: _bookListFuture,
+      body: FutureBuilder<List<dynamic>>(
+        future: fetchBooks(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -54,7 +66,7 @@ class _ToreadListPageState extends State<ToreadListPage> {
                 final book = books[index];
                 return ListItem(
                   nickname: '', 
-                  title: book.title, 
+                  title: book['title'], 
                   content: '', 
                   trailingText: '',
                   leadingText: null,
@@ -63,7 +75,7 @@ class _ToreadListPageState extends State<ToreadListPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => BookDetailPage(
-                        bookId: (book.id).toString(),
+                        bookId: book['id'],
                         token: widget.token
                         ),
                       ),
