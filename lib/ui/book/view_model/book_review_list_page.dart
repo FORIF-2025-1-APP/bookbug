@@ -20,11 +20,11 @@ class _BookReviewListPageState extends State<BookReviewListPage> {
   String _sort = 'createdAt'; // 기본 정렬: 최신순
   final Map<String, String> _sortOptions = {
     'createdAt': '최신순',
-    'likeCount': '추천순',//확인 요망
+    'likedBy': '추천순',
   };
 
   Future<List<dynamic>> fetchReviews() async {
-    final url = Uri.parse('$baseUrl/api/reviews/book/${widget.bookId}&sort=$_sort');
+    final url = Uri.parse('$baseUrl/api/reviews/book/${widget.bookId}?sort="$_sort"');
     final response = await http.get(
       url,
       headers: {
