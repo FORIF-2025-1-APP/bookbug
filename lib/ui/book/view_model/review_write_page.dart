@@ -69,48 +69,47 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
   void _reviewCancel() {
     showDialog(
       context: context,
-      builder: (_) => PopUpCard(
-        title: '글 작성을 취소하시겠어요?',
-        description: '임시저장하실 경우 현재 진행 내역이 저장됩니다.\n삭제하실 경우 모든 내용이 지워집니다.',
-        leftButtonText: '임시 저장',
-        rightButtonText: '삭제',
-        onLeftPressed: () {
-          _immSave();
-          Navigator.pop(context);
-          Navigator.maybePop(context);
-        },
-        onRightPressed: () {
-          _clearDraft();
-          Navigator.pop(context);
-          Navigator.maybePop(context);
-        },
-      ),
+      builder:
+          (_) => PopUpCard(
+            title: '글 작성을 취소하시겠어요?',
+            description: '임시저장하실 경우 현재 진행 내역이 저장됩니다.\n삭제하실 경우 모든 내용이 지워집니다.',
+            leftButtonText: '임시 저장',
+            rightButtonText: '삭제',
+            onLeftPressed: () {
+              _immSave();
+              Navigator.pop(context);
+              Navigator.maybePop(context);
+            },
+            onRightPressed: () {
+              _clearDraft();
+              Navigator.pop(context);
+              Navigator.maybePop(context);
+            },
+          ),
     );
   }
 
   Future<void> _submitReview() async {
     if (_selectedBookIsbn == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('책을 먼저 선택해주세요')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('책을 먼저 선택해주세요')));
       return;
     }
 
     final responsebook = await http.post(
       Uri.parse('$baseUrl/api/books?isbn=$_selectedBookIsbn'),
-      headers: {
-        'Authorization': 'Bearer ${widget.token}',
-      },
+      headers: {'Authorization': 'Bearer ${widget.token}'},
     );
     if (responsebook.statusCode == 201) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('책이 추가되었습니다')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('책이 추가되었습니다')));
     }
 
     final resId = await http.get(
       Uri.parse('$baseUrl/api/books/isbn/$_selectedBookIsbn'),
-      headers: {
-        'Authorization': 'Bearer ${widget.token}',
-      },
+      headers: {'Authorization': 'Bearer ${widget.token}'},
     );
     if (resId.statusCode == 200) {
       _selectedBookId = jsonDecode(resId.body)['id'];
@@ -121,8 +120,8 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
       Uri.parse('$baseUrl/api/reviews'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${widget.token}'
-      },//토큰 필요
+        'Authorization': 'Bearer ${widget.token}',
+      }, //토큰 필요
       body: jsonEncode({
         'bookId': _selectedBookId,
         'title': controllerTitle.text.trim(),
@@ -134,56 +133,59 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
 
     if (response.statusCode == 201) {
       _clearDraft();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('리뷰가 등록되었습니다')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('리뷰가 등록되었습니다')));
       Navigator.pop(context);
     } else {
       debugPrint('리뷰 등록 실패: ${response.statusCode} ${response.body}');
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('리뷰 등록에 실패했습니다')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('리뷰 등록에 실패했습니다')));
     }
   }
 
   Future<void> _openBookSearchPopup() async {
     //임시 토큰 파트 시작
-      String tokenT = '';
-      final urlL = Uri.parse('$baseUrl/api/auth/login');
-      final response = await http.post(
-        urlL,
-        headers: {
-          'accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: jsonEncode({"email": "user@example.com", "password": "string"})
-      );
+    String tokenT = '';
+    final urlL = Uri.parse('$baseUrl/api/auth/login');
+    final response = await http.post(
+      urlL,
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({"email": "user@example.com", "password": "string"}),
+    );
 
-      if(response.statusCode == 200){
-        print('Response status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
+    if (response.statusCode == 200) {
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
-        try{
-          final decodedData = jsonDecode(response.body);
-          print('Decoded JSON: $decodedData');
-          tokenT = decodedData['token'];
-        } catch(e){
-          print('failed to decode JSON: $e');
-        }
-      } else{
-
+      try {
+        final decodedData = jsonDecode(response.body);
+        print('Decoded JSON: $decodedData');
+        tokenT = decodedData['token'];
+      } catch (e) {
+        print('failed to decode JSON: $e');
       }
-      //임시 토큰 파트 끝
+    } else {}
+    //임시 토큰 파트 끝
 
     String query = '';
     List<Map<String, dynamic>> results = [];
 
-    Future<void> _searchBooks(
+    Future<void> searchBooks(
       String keyword,
       void Function(void Function()) setDialogState,
     ) async {
       try {
-        final res = await http.get(Uri.parse('$baseUrl/api/books?query=$keyword'),
+        final res = await http.get(
+          Uri.parse('$baseUrl/api/books?query=$keyword'),
           headers: {
             'accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $tokenT'
+            'Authorization': 'Bearer $tokenT',
           },
         );
         if (res.statusCode == 200) {
@@ -216,7 +218,7 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
                     onChanged: (value) {
                       query = value.trim();
                       if (query.length >= 2) {
-                        _searchBooks(query, setDialogState);
+                        searchBooks(query, setDialogState);
                       }
                     },
                   ),
@@ -224,19 +226,20 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
                   SizedBox(
                     height: 200,
                     width: 300,
-                    child: results.isEmpty
-                        ? const Center(child: Text('검색 결과가 없습니다'))
-                        : ListView.builder(
-                            itemCount: results.length,
-                            itemBuilder: (context, index) {
-                              final book = results[index];
-                              return ListTile(
-                                title: Text(book['title'] ?? ''),
-                                subtitle: Text(book['author'] ?? ''),
-                                onTap: () => Navigator.pop(context, book),
-                              );
-                            },
-                          ),
+                    child:
+                        results.isEmpty
+                            ? const Center(child: Text('검색 결과가 없습니다'))
+                            : ListView.builder(
+                              itemCount: results.length,
+                              itemBuilder: (context, index) {
+                                final book = results[index];
+                                return ListTile(
+                                  title: Text(book['title'] ?? ''),
+                                  subtitle: Text(book['author'] ?? ''),
+                                  onTap: () => Navigator.pop(context, book),
+                                );
+                              },
+                            ),
                   ),
                 ],
               ),
@@ -279,32 +282,32 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
           children: [
             Row(
               children: [
-                const Text('책 정보', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  '책 정보',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const Spacer(),
                 TextButton(
                   onPressed: _openBookSearchPopup,
                   child: const Text('도서 검색'),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 8),
             if (_selectedBookData != null)
               BookinfoBase(
-                imageProvider: _selectedBookData?['image'] != null &&
-                        _selectedBookData!['image'].toString().isNotEmpty
-                    ? NetworkImage(_selectedBookData!['image'])
-                    : const AssetImage('assets/images/placeholder.png'),
+                imageProvider:
+                    _selectedBookData?['image'] != null &&
+                            _selectedBookData!['image'].toString().isNotEmpty
+                        ? NetworkImage(_selectedBookData!['image'])
+                        : const AssetImage('assets/images/placeholder.png'),
                 author: _selectedBookData?['author'] ?? '',
                 title: _selectedBookData?['title'] ?? '',
                 publisher: _selectedBookData?['publisher'] ?? '',
                 pubDate: _selectedBookData?['pubDate'] ?? '',
-                review: '',
               ),
             const SizedBox(height: 16),
-            ContentTextBase(
-              label: '리뷰 제목',
-              controller: controllerTitle,
-            ),
+            ContentTextBase(label: '리뷰 제목', controller: controllerTitle),
             const SizedBox(height: 8),
             StarRatingBase(
               rating: _rating,
@@ -336,18 +339,16 @@ class _ReviewWritePageState extends State<ReviewWritePage> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: _tags.map((tag) {
-                return DeleteableTagBase(
-                  tagName: tag,
-                  onDelete: () => setState(() => _tags.remove(tag)),
-                );
-              }).toList(),
+              children:
+                  _tags.map((tag) {
+                    return DeleteableTagBase(
+                      tagName: tag,
+                      onDelete: () => setState(() => _tags.remove(tag)),
+                    );
+                  }).toList(),
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _submitReview,
-              child: const Text('완료'),
-            ),
+            ElevatedButton(onPressed: _submitReview, child: const Text('완료')),
           ],
         ),
       ),

@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:bookbug/ui/lists/view_model/wrote_list_page.dart';
 import 'package:bookbug/data/services/token_manager.dart';
 import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
 import 'package:bookbug/ui/book/view_model/book_review_list_page.dart';
@@ -429,9 +429,7 @@ class _ProfileState extends State<Profile> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:
-                            (_) =>
-                                BookReviewListPage(bookId: 'id', token: token),
+                        builder: (_) => WroteListPage(token: token),
                       ), // id 불러와야됨
                     );
                   } else {

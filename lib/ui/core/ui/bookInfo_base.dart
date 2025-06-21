@@ -6,7 +6,6 @@ class BookinfoBase extends StatelessWidget {
   final String title;
   final String publisher;
   final String pubDate;
-  final String review;
 
   BookinfoBase({
     required this.imageProvider,
@@ -14,7 +13,6 @@ class BookinfoBase extends StatelessWidget {
     required this.title,
     required this.publisher,
     required this.pubDate,
-    required this.review,
     super.key,
   });
 
@@ -42,39 +40,48 @@ class BookinfoBase extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
               child: FittedBox(
                 fit: BoxFit.fitWidth,
-                child:Text(title, style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.primaryContainer
-                ))
-              )
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-              child: Text(author, style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.normal,
-                  color: colorScheme.inversePrimary)),
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primaryContainer,
+                  ),
+                ),
+              ),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
               child: Text(
-                '$publisher.$pubDate',
+                author,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
-                  color: colorScheme.inversePrimary),
+                  color: colorScheme.inversePrimary,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+              child: Text(
+                publisher,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: colorScheme.inversePrimary,
+                ),
                 selectionColor: colorScheme.inversePrimary,
               ),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
               child: Text(
-                review,
+                pubDate,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
-                  color: colorScheme.inversePrimary),
+                  color: colorScheme.inversePrimary,
+                ),
                 selectionColor: colorScheme.inversePrimary,
               ),
             ),

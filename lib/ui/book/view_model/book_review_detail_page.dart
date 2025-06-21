@@ -18,7 +18,7 @@ class BookReviewDetailPage extends StatefulWidget {
     super.key,
     required this.reviewId,
     required this.bookId,
-    required this.token
+    required this.token,
   });
 
   @override
@@ -46,21 +46,21 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
         Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${widget.token}'
+          'Authorization': 'Bearer ${widget.token}',
         },
       );
       final bookRes = await http.get(
         Uri.parse('$baseUrl/api/books/${widget.bookId}'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${widget.token}'
+          'Authorization': 'Bearer ${widget.token}',
         },
       );
       final replyRes = await http.get(
         Uri.parse('$baseUrl/api/replies/review/${widget.reviewId}'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${widget.token}'
+          'Authorization': 'Bearer ${widget.token}',
         },
       );
 
@@ -71,7 +71,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
           reviewData = jsonDecode(reviewRes.body);
           bookData = jsonDecode(bookRes.body);
           replies = jsonDecode(replyRes.body);
-          isLiked = reviewData?['liked'] ?? false;
+          isLiked = reviewData?['_count']['likedBy'] ?? false;
           isLoading = false;
         });
       } else {
@@ -86,9 +86,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
   Future<void> _toggleLike() async {
     try {
       final url = Uri.parse('$baseUrl/api/reviews/like/${widget.reviewId}');
-      final response = isLiked
-          ? await http.delete(url)
-          : await http.post(url);
+      final response = isLiked ? await http.delete(url) : await http.post(url);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         setState(() {
@@ -103,120 +101,137 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
   }
 
   void _editReview() {
-    final titleController = TextEditingController(text: reviewData?['title'] ?? '');
-    final contentController = TextEditingController(text: reviewData?['content'] ?? '');
+    final titleController = TextEditingController(
+      text: reviewData?['title'] ?? '',
+    );
+    final contentController = TextEditingController(
+      text: reviewData?['description'] ?? '',
+    );
     double rating = reviewData?['rating']?.toDouble() ?? 0.0;
-    List<String> tags = List<String>.from(reviewData?['tags'] ?? []);
+    List<String> tags = List<String>.from(reviewData?['tags']['name'] ?? []);
     final tagController = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (_) => StatefulBuilder(
-        builder: (context, setStateDialog) => AlertDialog(
-          title: const Text('리뷰 수정'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(labelText: '제목'),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: contentController,
-                  maxLines: 4,
-                  decoration: const InputDecoration(labelText: '내용'),
-                ),
-                const SizedBox(height: 8),
-                StarRatingBase(
-                  rating: rating,
-                  onRatingChanged: (val) {
-                    setStateDialog(() => rating = val);
-                  },
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: tagController,
-                        decoration: const InputDecoration(hintText: '태그 추가'),
-                      ),
+      builder:
+          (_) => StatefulBuilder(
+            builder:
+                (context, setStateDialog) => AlertDialog(
+                  title: const Text('리뷰 수정'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: titleController,
+                          decoration: const InputDecoration(labelText: '제목'),
+                        ),
+                        const SizedBox(height: 8),
+                        TextField(
+                          controller: contentController,
+                          maxLines: 4,
+                          decoration: const InputDecoration(labelText: '내용'),
+                        ),
+                        const SizedBox(height: 8),
+                        StarRatingBase(
+                          rating: rating,
+                          onRatingChanged: (val) {
+                            setStateDialog(() => rating = val);
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: tagController,
+                                decoration: const InputDecoration(
+                                  hintText: '태그 추가',
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () {
+                                final trimmed = tagController.text.trim();
+                                if (trimmed.isEmpty || tags.contains(trimmed))
+                                  return;
+                                setStateDialog(() {
+                                  tags.add(trimmed);
+                                  tagController.clear();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children:
+                              tags
+                                  .map(
+                                    (tag) => Chip(
+                                      label: Text(tag),
+                                      onDeleted:
+                                          () => setStateDialog(
+                                            () => tags.remove(tag),
+                                          ),
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        final trimmed = tagController.text.trim();
-                        if (trimmed.isEmpty || tags.contains(trimmed)) return;
-                        setStateDialog(() {
-                          tags.add(trimmed);
-                          tagController.clear();
-                        });
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('취소'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final newTitle = titleController.text.trim();
+                        final newContent = contentController.text.trim();
+
+                        if (newTitle.isEmpty || newContent.isEmpty) return;
+
+                        try {
+                          final response = await http.put(
+                            Uri.parse(
+                              '$baseUrl/api/reviews/${widget.reviewId}',
+                            ),
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': 'Bearer ${widget.token}',
+                            },
+                            body: jsonEncode({
+                              'title': newTitle,
+                              'description': newContent,
+                              'rating': rating,
+                              'tags': tags,
+                            }),
+                          );
+
+                          if (response.statusCode == 200) {
+                            Navigator.pop(context);
+                            _loadData(); // 변경된 데이터 다시 불러오기
+                          } else {
+                            throw Exception('리뷰 수정 실패: ${response.body}');
+                          }
+                        } catch (e) {
+                          debugPrint('리뷰 수정 오류: $e');
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('리뷰 수정에 실패했습니다')),
+                          );
+                        }
                       },
-                    )
+                      child: const Text('저장'),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: tags
-                      .map((tag) => Chip(
-                            label: Text(tag),
-                            onDeleted: () => setStateDialog(() => tags.remove(tag)),
-                          ))
-                      .toList(),
-                )
-              ],
-            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('취소'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final newTitle = titleController.text.trim();
-                final newContent = contentController.text.trim();
-
-                if (newTitle.isEmpty || newContent.isEmpty) return;
-
-                try {
-                  final response = await http.put(
-                    Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': 'Bearer ${widget.token}'
-                    },
-                    body: jsonEncode({
-                      'title': newTitle,
-                      'description': newContent,
-                      'rating': rating,
-                      'tags': tags,
-                    }),
-                  );
-
-                  if (response.statusCode == 200) {
-                    Navigator.pop(context);
-                    _loadData(); // 변경된 데이터 다시 불러오기
-                  } else {
-                    throw Exception('리뷰 수정 실패: ${response.body}');
-                  }
-                } catch (e) {
-                  debugPrint('리뷰 수정 오류: $e');
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('리뷰 수정에 실패했습니다')),
-                  );
-                }
-              },
-              child: const Text('저장'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -226,7 +241,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
         Uri.parse('$baseUrl/api/reviews/${widget.reviewId}'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${widget.token}'
+          'Authorization': 'Bearer ${widget.token}',
         },
       );
 
@@ -258,75 +273,79 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 책 정보
-                  BookinfoBase(
-                    imageProvider: NetworkImage(bookData?['image'] ?? ''),
-                    author: bookData?['author'] ?? '',
-                    title: bookData?['title'] ?? '',
-                    publisher: bookData?['publisher'] ?? '',//주의
-                    pubDate: bookData?['pubDate'] ?? '',
-                    review: reviewData?['description'] ?? '',
-                  ),
-                  const SizedBox(height: 16),
-                  // 작성자 정보
-                  Row(
-                    children: [
-                      ProfileimageBase(
-                        width: 40,
-                        height: 40,
-                        image: reviewData?['author']['image'] ?? 'assets/images/sample.png',
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        reviewData?['author']['username'] ?? '익명',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primaryContainer,
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 책 정보
+                    BookinfoBase(
+                      imageProvider: NetworkImage(bookData?['image'] ?? ''),
+                      author: bookData?['author'] ?? '',
+                      title: bookData?['title'] ?? '',
+                      publisher: bookData?['publisher'] ?? '', //주의
+                      pubDate: bookData?['pubDate'] ?? '',
+                    ),
+                    const SizedBox(height: 16),
+                    // 작성자 정보
+                    Row(
+                      children: [
+                        ProfileimageBase(
+                          width: 40,
+                          height: 40,
+                          image:
+                              reviewData?['author']['image'] ??
+                              'assets/images/sample.png',
                         ),
+                        const SizedBox(width: 8),
+                        Text(
+                          reviewData?['author']['username'] ?? '익명',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // 리뷰 제목 및 내용
+                    Text(
+                      reviewData?['title'] ?? '',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primaryContainer,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  // 리뷰 제목 및 내용
-                  Text(
-                    reviewData?['title'] ?? '',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primaryContainer,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    reviewData?['description'] ?? '',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).colorScheme.primaryContainer,
+                    const SizedBox(height: 8),
+                    Text(
+                      reviewData?['description'] ?? '',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  // 태그
-                  Wrap(
-                    spacing: 8,
-                    children: (reviewData?['tags'] as List<dynamic>?)
-                            ?.map((tag) => TagBase(tagName: tag.toString()))
-                            .toList() ??
-                        [],
-                  ),
-                  const SizedBox(height: 16),
-                  // 댓글 섹션
-                  _buildReplySection(context),
-                ],
+                    const SizedBox(height: 16),
+                    // 태그
+                    Wrap(
+                      spacing: 8,
+                      children:
+                          (reviewData?['tags']['name'] as List<dynamic>?)
+                              ?.map((tag) => TagBase(tagName: tag.toString()))
+                              .toList() ??
+                          [],
+                    ),
+                    const SizedBox(height: 16),
+                    // 댓글 섹션
+                    _buildReplySection(context),
+                  ],
+                ),
               ),
-            ),
     );
   }
 
@@ -344,7 +363,11 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 children: [
                   const Text(
                     '댓글',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -374,16 +397,18 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 nickname: reply['author']['username'] ?? '',
                 title: '',
                 content: reply['reply'] ?? '',
-                leadingText: (reply['author']['username'] ?? 'U')[0].toUpperCase(),
+                leadingText:
+                    (reply['author']['username'] ?? 'U')[0].toUpperCase(),
                 trailingText: reply['createdAt']?.substring(0, 10) ?? '',
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BookReplyDetailPage(
-                        replyId: reply['id'],
-                        token: widget.token
-                      ),
+                      builder:
+                          (context) => BookReplyDetailPage(
+                            replyId: reply['id'],
+                            token: widget.token,
+                          ),
                     ),
                   );
                 },
@@ -398,10 +423,11 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => BookReplyListPage(
-                      reviewId: widget.reviewId,
-                      token: widget.token,
-                    ),
+                    builder:
+                        (context) => BookReplyListPage(
+                          reviewId: widget.reviewId,
+                          token: widget.token,
+                        ),
                   ),
                 );
               },
