@@ -1,16 +1,87 @@
-# bookbug
+# 📚 북북 (BookBug)
 
-A new Flutter project.
+**도서 기반 토론의 장**  
+독서를 단순 소비에서 끝내지 않고, 자유롭고 가볍게 소통하며 지식을 나누는 어플리케이션
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📝 프로젝트 개요
 
-A few resources to get you started if this is your first Flutter project:
+### 🎯 프로젝트 주제  
+**도서 기반 토론의 장**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 💡 기획 배경  
+기존 도서 앱들은 접근성이 낮고 무겁게 느껴져 많은 사람들이 이용하기 불편했습니다.  
+저희는 개인적인 독서 경험 공유에 머물지 않고 **텍스트힙 유행**과 결합한 자유롭고 가벼운 도서 앱을 만들고자 했습니다.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 🌟 프로젝트 목표  
+**지식의 선순환**  
+리뷰를 통해 지식을 나누고 공유된 정보가 새로운 독서 활동을 자극하며  
+사회 전체 지식의 순환을 촉진합니다.
+
+---
+
+## 🚀 주요 기능 소개
+
+- **커뮤니티**
+  - 댓글 / 답글
+  - 리뷰 좋아요
+  - 태그 기반 사용자 참여형 분류
+- **책 평가**
+  - 책 별점
+  - 리뷰 작성 및 관리
+- **독서 장려**
+  - 뱃지 제공
+  - 알림 기능
+  - 읽을 책 리스트 (북마크)
+
+---
+
+## 👥 팀 소개
+
+| 이름 | 주요 역할 | 담당 업무 |
+| --- | --- | --- |
+| 김동희 | 팀장 / 개발 | 프로젝트 기획 및 일정 관리, 로그인 페이지 |
+| 신원영 | 개발 | 홈페이지, 상세검색 |
+| 이원규 | 개발 | 유저 프로필, 프로필 수정 |
+| 정경욱 | 개발 | 리뷰 작성, 리뷰/책 상세 |
+
+### 협업 방법
+- GitHub
+- Notion
+- Figma
+
+---
+
+## ⚙️ 기술 스택
+
+- **언어:** Dart
+- **프레임워크:** Flutter
+
+### API 문서  
+[📄 API 명세서](https://forifbookbugapi.seongjinemong.app/docs/#/)
+
+### 아키텍처
+// 추후 반영 //
+
+### DB 다이어그램
+// 추후 반영 //
+
+---
+
+## 🖼️ 스크린샷  
+// 추후 반영 //
+
+---
+
+## 🚧 고도화 계획
+
+- iOS 배포 준비
+- 다국어 지원 기능 확장
+
+---
+
+## 📌 참고 자료
+
+- [Flutter 공식 문서](https://flutter.dev)
+
