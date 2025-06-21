@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bookbug/data/services/token_manager.dart';
 import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
 import 'package:bookbug/ui/book/view_model/book_review_list_page.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import 'package:bookbug/data/services/auth_provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
+
   @override
   State<Profile> createState() => _ProfileState();
 }
@@ -36,22 +38,9 @@ class _ProfileState extends State<Profile> {
 
   Future<void> _loadUser() async {
     final token = context.read<AuthProvider>().token;
-    if (token == null) {
+    if (token != null) {
       setState(() {
-        _userFuture = Future.error('로그인된 토큰이 없습니다.');
-      });
-      return;
-    }
-
-    try {
-      final user = await getUserProfile(token);
-      setState(() {
-        _userFuture = Future.value(user);
-      });
-    } catch (e, stack) {
-      debugPrint('▶️ _loadUser() 예외: $e\n$stack');
-      setState(() {
-        _userFuture = Future.error(e.toString());
+        _userFuture = getUserProfile(token);
       });
     }
   }
@@ -69,15 +58,14 @@ class _ProfileState extends State<Profile> {
       if (token != null) {
         try {
           await uploadProfileImage(token, file);
-          final newUser = await getUserProfile(token);
+
           setState(() {
-            _imageFile = null;
-            _userFuture = Future.value(newUser);
+            _userFuture = getUserProfile(token);
           });
         } catch (e) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('이미지 업로드 실패: $e')));
+          ).showSnackBar(SnackBar(content: Text('이미지 업로드 실패: \$e')));
         }
       }
     }
@@ -98,10 +86,13 @@ class _ProfileState extends State<Profile> {
               TextButton(
                 onPressed: () async {
                   Navigator.pop(context);
+
                   await _storage.delete(key: 'token');
                   await _storage.delete(key: 'auth_token');
+
                   if (!mounted) return;
                   Provider.of<AuthProvider>(context, listen: false).logout();
+
                   if (!mounted) return;
                   Navigator.of(
                     context,
@@ -148,22 +139,12 @@ class _ProfileState extends State<Profile> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            final errorMsg = snapshot.error.toString();
-            if (errorMsg.contains('401')) {
-              return Center(child: Text('세션이 만료되었습니다. 다시 로그인해주세요.'));
-            }
-            if (errorMsg.contains('토큰이 없습니다')) {
-              return Center(child: Text('로그인 후 이용 가능합니다.'));
-            }
-            return Center(child: Text('에러 발생: $errorMsg'));
-          }
-          if (!snapshot.hasData) {
+          } else if (snapshot.hasError) {
+            return Center(child: Text('에러: \${snapshot.error}'));
+          } else if (!snapshot.hasData) {
             return const Center(child: Text('사용자 정보가 없습니다.'));
           }
-
-          final user = snapshot.data!;
+          var user = snapshot.data!;
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Column(
@@ -176,12 +157,13 @@ class _ProfileState extends State<Profile> {
                       radius: 50,
                       backgroundImage:
                           _imageFile != null
-                              ? FileImage(_imageFile!) as ImageProvider
+                              ? FileImage(_imageFile!)
                               : (user.image?.isNotEmpty == true
-                                  ? NetworkImage(user.image!)
-                                  : const AssetImage(
-                                    'assets/defaultimage.png',
-                                  )),
+                                      ? NetworkImage(user.image!)
+                                      : const AssetImage(
+                                        'assets/defaultimage.png',
+                                      ))
+                                  as ImageProvider,
                       child:
                           _imageFile == null && (user.image?.isEmpty ?? true)
                               ? const Icon(
@@ -194,17 +176,16 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  user.name,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                Center(
+                  child: Text(
+                    user.name,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(user.email, style: const TextStyle(color: Colors.grey)),
-                const SizedBox(height: 12),
-
+                // Profile 위젯 내부 build 메서드에서
                 Center(
                   child: TextButton(
                     onPressed: () {
@@ -214,10 +195,11 @@ class _ProfileState extends State<Profile> {
                           builder: (_) => ProfileEdit(user: user),
                         ),
                       ).then((updatedUser) {
+                        // 수정 완료 후 updatedUser가 null이 아닐 때만 setState
                         if (updatedUser != null) {
                           setState(() {
-                            _imageFile = null;
-                            _userFuture = Future.value(updatedUser);
+                            // Profile 화면의 user를 갱신
+                            user = updatedUser;
                           });
                         }
                       });
@@ -231,7 +213,7 @@ class _ProfileState extends State<Profile> {
                   child: Flex(
                     direction: Axis.horizontal,
                     children: [
-                      Expanded(child: booksection(context, '최애 책')),
+                      Expanded(child: booksection(context, '최애 책', user)),
                       Expanded(child: badgesection(context, '뱃지(0)')),
                     ],
                   ),
@@ -247,14 +229,8 @@ class _ProfileState extends State<Profile> {
   }
 
   // Original UI functions
-  Widget booksection(BuildContext context, String title) {
-    final Map<String, dynamic> book = {
-      'id': 'id',
-      'title': 'Book',
-      'author': 'Author',
-      'rating': 3.5,
-      'imageUrl': 'https://via.placeholder.com/150x200',
-    };
+  Widget booksection(BuildContext context, String title, User user) {
+    final fav = user.favoriteBook;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -270,31 +246,77 @@ class _ProfileState extends State<Profile> {
           child: SizedBox(
             height: 260,
             width: 160,
-            child: GestureDetector(
-              onTap: () {
-                final token = context.read<AuthProvider>().token;
-                if (token != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => BookDetailPage(bookId: 'id', token: token),
-                    ), // id 불러와야됨
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('로그인된 토큰이 없습니다.')),
-                  );
-                }
-              },
-              child: BookCard(
-                id: book['id'],
-                title: book['title'],
-                author: book['author'],
-                rating: book['rating'],
-                imageUrl: book['imageUrl'],
-              ),
-            ),
+            child:
+                fav != null
+                    ? GestureDetector(
+                      onTap: () {
+                        final token = context.read<AuthProvider>().token;
+                        if (token != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (_) => BookDetailPage(
+                                    bookId: fav.id,
+                                    token: token,
+                                  ),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('로그인된 토큰이 없습니다.')),
+                          );
+                        }
+                      },
+                      child: BookCard(
+                        id: fav.id,
+                        title: fav.title,
+                        author: fav.author,
+                        rating: fav.rating,
+                        imageUrl: fav.imageUrl,
+                        onTap: () {
+                          final token = context.read<AuthProvider>().token;
+                          if (token != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => BookDetailPage(
+                                      bookId: fav.id,
+                                      token: token,
+                                    ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('로그인된 토큰이 없습니다.')),
+                            );
+                          }
+                        },
+                      ),
+                    )
+                    : Container(
+                      height: 260,
+                      width: 160,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0EFE1),
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(25),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text(
+                          '최애 책이 없습니다.\n수정 화면에서 설정하세요.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
           ),
         ),
       ],
