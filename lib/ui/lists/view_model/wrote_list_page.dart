@@ -14,6 +14,7 @@ class WroteListPage extends StatefulWidget {
 }
 
 class _WroteListPageState extends State<WroteListPage> {
+  final String baseUrl = 'https://forifbookbugapi.seongjinemong.app';
   Future<List<Review>>? _myReviewsFuture;
   int reviewCount = 0;
 
