@@ -306,7 +306,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    reviewData?['content'] ?? '',
+                    reviewData?['description'] ?? '',
                     style: TextStyle(
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.primaryContainer,
