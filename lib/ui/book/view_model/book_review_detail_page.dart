@@ -86,7 +86,13 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
   Future<void> _toggleLike() async {
     try {
       final url = Uri.parse('$baseUrl/api/reviews/like/${widget.reviewId}');
-      final response = isLiked ? await http.post(url) : await http.post(url);
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
 
       if (response.statusCode == 204) {
         setState(() {
