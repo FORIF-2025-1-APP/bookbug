@@ -72,6 +72,7 @@ class _ProfileEditState extends State<ProfileEdit> {
     // (여기에 uploadProfileImage, updateUserProfile, 다시 getUserProfile을 호출하는 로직을 구현)
     // 예시이므로 실제 본인의 user_api 함수에 맞춰 수정하세요.
     final token = context.read<AuthProvider>().token;
+    bool updatePassword = false;
     if (token == null) {
       ScaffoldMessenger.of(
         context,
@@ -106,6 +107,7 @@ class _ProfileEditState extends State<ProfileEdit> {
           username: newUsername,
           password: newPassword,
         );
+        updatePassword = true;
       } else {
         await updateUserProfile(token: token, username: newUsername);
       }
@@ -124,6 +126,9 @@ class _ProfileEditState extends State<ProfileEdit> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('수정 중 오류가 발생했습니다: $e')));
+    }
+    if (updatePassword == true) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     }
   }
 
