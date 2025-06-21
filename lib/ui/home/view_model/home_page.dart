@@ -110,8 +110,6 @@ class _HomePageState extends State<HomePage> {
     switch (_selectedIndex) {
       case 0:
         return AppBar(
-          title: const Text('Home'),
-          centerTitle: false,
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
