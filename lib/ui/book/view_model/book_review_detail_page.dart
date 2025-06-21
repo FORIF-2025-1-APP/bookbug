@@ -374,7 +374,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
                 nickname: reply['author']['username'] ?? '',
                 title: '',
                 content: reply['reply'] ?? '',
-                leadingText: (reply['userId']['username'] ?? 'U')[0].toUpperCase(),
+                leadingText: (reply['author']['username'] ?? 'U')[0].toUpperCase(),
                 trailingText: reply['createdAt']?.substring(0, 10) ?? '',
                 onTap: () {
                   Navigator.push(
