@@ -88,7 +88,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
       final url = Uri.parse('$baseUrl/api/reviews/like/${widget.reviewId}');
       final response = isLiked ? await http.delete(url) : await http.post(url);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 204) {
         setState(() {
           isLiked = !isLiked;
         });
