@@ -200,7 +200,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
     );
 
     if (response.statusCode == 200) {
-      final decodedData = jsonDecode(response.body).sublist(0, 2);
+      final decodedData = jsonDecode(response.body);
       return decodedData;
     } else {
       throw Exception('리뷰 데이터를 불러오지 못했습니다: ${response.body}');
@@ -243,7 +243,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: jsonData.length,
+                itemCount: jsonData.length > 2 ? 2 : jsonData.length,
                 itemBuilder: (context, index) {
                   final review = jsonData[index];
                   return ListItem(
