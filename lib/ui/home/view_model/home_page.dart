@@ -33,7 +33,9 @@ class _HomePageState extends State<HomePage> {
     if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ReviewWritePage(token: widget.token)),
+        MaterialPageRoute(
+          builder: (context) => ReviewWritePage(token: widget.token),
+        ),
       );
       return;
     }
@@ -49,7 +51,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     final uri = Uri.parse(
-      'https://forifbookbugapi.seongjinemong.app/api/books?query=$query'
+      'https://forifbookbugapi.seongjinemong.app/api/books?query=$query',
     );
 
     print("[DEBUG] 최종 요청 URI: $uri");
@@ -58,7 +60,7 @@ class _HomePageState extends State<HomePage> {
       uri,
       headers: {
         'accept': 'application/json',
-        'Authorization': 'Bearer ${widget.token}'
+        'Authorization': 'Bearer ${widget.token}',
       },
     );
 
@@ -81,7 +83,6 @@ class _HomePageState extends State<HomePage> {
     return [];
   }
 
-
   PreferredSizeWidget? _buildAppBar() {
     switch (_selectedIndex) {
       case 0:
@@ -92,20 +93,26 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: CircleIconButton(
                 icon: Icons.search,
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchPage(token: widget.token)),
-                ),
+                onPressed:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SearchPage(token: widget.token),
+                      ),
+                    ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: CircleIconButton(
                 icon: Icons.notifications,
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const NotificationsPage()),
-                ),
+                onPressed:
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationsPage(),
+                      ),
+                    ),
               ),
             ),
           ],
@@ -119,78 +126,77 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-Widget _buildBody() {
-  switch (_selectedIndex) {
-    case 0:
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 0.6,
-            ),
-            itemCount: 9,
-            itemBuilder: (context, index) {
-              String query = generateRandomWord();
-              return FutureBuilder<List<BookCard>>(
-                future: fetchBooks(query: query),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox.shrink();
-                    // return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('오류: ${snapshot.error}'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('책이 없습니다.'));
-                  }
+  Widget _buildBody() {
+    switch (_selectedIndex) {
+      case 0:
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 0.6,
+              ),
+              itemCount: 9,
+              itemBuilder: (context, index) {
+                String query = generateRandomWord();
+                return FutureBuilder<List<BookCard>>(
+                  future: fetchBooks(query: query),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox.shrink();
+                      // return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('오류: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('책이 없습니다.'));
+                    }
 
-                  final books = snapshot.data!;
-                  final book = books[index % books.length];
-                  return Container(
-                    decoration: BoxDecoration(
-                    ),
-                    child: BookCard(
-                      id: book.id,
-                      title: book.title,
-                      author: book.author,
-                      rating: book.rating,
-                      imageUrl: book.imageUrl,
-                      onTap: () {
-                        print("[DEBUG] Navigating to BookDetailPage with isbn: ${book.id}");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BookDetailPage(
-                              bookId: book.id,
-                              token: widget.token,
+                    final books = snapshot.data!;
+                    final book = books[index % books.length];
+                    return Container(
+                      decoration: BoxDecoration(),
+                      child: BookCard(
+                        id: book.id,
+                        title: book.title,
+                        author: book.author,
+                        rating: book.rating,
+                        imageUrl: book.imageUrl,
+                        onTap: () {
+                          print(
+                            "[DEBUG] Navigating to BookDetailPage with isbn: ${book.id}",
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => BookDetailPage(
+                                    bookId: book.id,
+                                    token: widget.token,
+                                  ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-            },
+                          );
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
-        ),
-      );
-    case 2:
-      return const Profile();
-    default:
-      return const Center(child: Text('페이지 없음'));
+        );
+      case 2:
+        return const Profile();
+      default:
+        return const Center(child: Text('페이지 없음'));
+    }
   }
-}
-
-
 
   String generateRandomWord() {
     final word = WordPair.random().first;
     return word.toLowerCase();
   }
-
 
   @override
   Widget build(BuildContext context) {

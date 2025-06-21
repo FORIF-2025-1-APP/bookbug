@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bookbug/data/services/token_manager.dart';
 import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
 import 'package:bookbug/ui/book/view_model/book_review_list_page.dart';
+import 'package:bookbug/ui/core/themes/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -122,7 +123,9 @@ class _ProfileState extends State<Profile> {
             icon: Icons.dark_mode,
             size: 40,
             iconSize: 20,
-            onPressed: () {},
+            onPressed: () {
+              context.read<ThemeProvider>().toggleTheme();
+            },
           ),
           const SizedBox(width: 8),
           CircleIconButton(
@@ -299,7 +302,7 @@ class _ProfileState extends State<Profile> {
                       height: 260,
                       width: 160,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF0EFE1),
+                        color: Theme.of(context).colorScheme.primaryContainer,
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
@@ -341,7 +344,7 @@ class _ProfileState extends State<Profile> {
             height: 260,
             width: 160,
             decoration: BoxDecoration(
-              color: const Color(0xFFF0EFE1),
+              color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
