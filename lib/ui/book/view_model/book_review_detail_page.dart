@@ -71,7 +71,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
           reviewData = jsonDecode(reviewRes.body);
           bookData = jsonDecode(bookRes.body);
           replies = jsonDecode(replyRes.body);
-          isLiked = reviewData?['_count']['likedBy'] ?? false;
+          isLiked = reviewData?['isLiked'] ?? false;
           isLoading = false;
         });
       } else {
@@ -86,7 +86,7 @@ class _BookReviewDetailPageState extends State<BookReviewDetailPage> {
   Future<void> _toggleLike() async {
     try {
       final url = Uri.parse('$baseUrl/api/reviews/like/${widget.reviewId}');
-      final response = isLiked ? await http.delete(url) : await http.post(url);
+      final response = isLiked ? await http.post(url) : await http.post(url);
 
       if (response.statusCode == 204) {
         setState(() {

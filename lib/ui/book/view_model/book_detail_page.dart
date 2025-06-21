@@ -70,9 +70,13 @@ class _BookDetailPageState extends State<BookDetailPage> {
         },
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('북마크에 추가되었습니다!')),
+        );
+      } else if (response.statusCode == 400) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('이미 북마크된 책입니다.')),
         );
       } else {
         throw Exception('북마크 추가 실패: ${response.body}');

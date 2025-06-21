@@ -62,12 +62,12 @@ class _LinkedListPageState extends State<LinkedListPage> {
               itemBuilder: (context, index) {
                 final review = likedReviews[index];
                 return ListItem(
-                  nickname: review[''],
+                  nickname: review['author']['username'],
                   title: review['title'],
                   content: review['description'],
                   trailingText: review['createdAt'],
-                  leadingText: review['']
-                      ? review[''].toUpperCase()
+                  leadingText: review['author']['username']
+                      ? review['author']['username'].toUpperCase()
                       : '',
                   onTap: () {
                     Navigator.push(
