@@ -45,7 +45,7 @@ class BookinfoBase extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.primaryContainer,
+                    color: colorScheme.scrim,
                   ),
                 ),
               ),
@@ -57,7 +57,7 @@ class BookinfoBase extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
-                  color: colorScheme.inversePrimary,
+                  color: colorScheme.scrim,
                 ),
               ),
             ),
@@ -68,7 +68,7 @@ class BookinfoBase extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
-                  color: colorScheme.inversePrimary,
+                  color: colorScheme.scrim,
                 ),
                 selectionColor: colorScheme.inversePrimary,
               ),
@@ -80,7 +80,7 @@ class BookinfoBase extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
-                  color: colorScheme.inversePrimary,
+                  color: colorScheme.scrim,
                 ),
                 selectionColor: colorScheme.inversePrimary,
               ),
