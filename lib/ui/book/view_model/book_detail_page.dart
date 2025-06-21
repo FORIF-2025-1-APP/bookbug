@@ -60,18 +60,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   Future<void> _addToBookmark() async {
-    final url = Uri.parse('$baseUrl/api/books/readlist');
+    final url = Uri.parse('$baseUrl/api/books/readlist?id=${widget.bookId}');
 
     try {
       final response = await http.post(
         url,
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': 'Bearer ${widget.token}'
         },
-        body: jsonEncode({
-          'bookId': widget.bookId, // 실제 책 ID 사용
-        }),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
