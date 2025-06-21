@@ -341,7 +341,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget badgesection(BuildContext context, String title) {
-    const badgeAsset = 'assets/hyu.jpeg';
+    const badgeAsset = 'assets/basic_profile_4.jpeg';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -372,7 +372,7 @@ class _ProfileState extends State<Profile> {
               children: [
                 SizedBox(
                   height: 200,
-                  child: BadgebuttonBase(badge: badgeAsset, badgename: 'HYU'),
+                  child: BadgebuttonBase(badge: badgeAsset, badgename: '시작이 반이다'),
                 ),
                 const Spacer(),
                 SizedBox(
