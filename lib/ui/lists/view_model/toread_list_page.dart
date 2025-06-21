@@ -27,8 +27,8 @@ class _ToreadListPageState extends State<ToreadListPage> {
     );
     if (response.statusCode == 200) {
       final decodedData = jsonDecode(response.body);
-      final String readlist = decodedData['readlist'];
-      return jsonDecode(readlist);
+      final readlist = decodedData['readlist'];
+      return readlist;
     } else {
       throw Exception('데이터를 불러오지 못했습니다: ${response.body}');
     }
