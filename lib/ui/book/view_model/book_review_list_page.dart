@@ -2,7 +2,6 @@ import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:bookbug/ui/book/view_model/book_review_detail_page.dart';
 
 class BookReviewListPage extends StatefulWidget {

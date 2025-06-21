@@ -1,8 +1,8 @@
 import 'package:bookbug/ui/core/ui/listitem_base.dart';
 import 'package:flutter/material.dart';
 import 'package:bookbug/ui/book/view_model/book_review_detail_page.dart';
-import 'package:bookbug/data/model/review_model.dart';
-import 'package:bookbug/data/services/api_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class WroteListPage extends StatefulWidget {
   final String token;
@@ -15,18 +15,34 @@ class WroteListPage extends StatefulWidget {
 
 class _WroteListPageState extends State<WroteListPage> {
   final String baseUrl = 'https://forifbookbugapi.seongjinemong.app';
-  Future<List<Review>>? _myReviewsFuture;
-  int reviewCount = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _myReviewsFuture = ApiService.getMyReviews().then((list) {
-      setState(() {
-        reviewCount = list.length;
-      });
-      return list;
-    });
+  Future<List<dynamic>> fetchReviews() async {
+    final profileUrl = Uri.parse('$baseUrl/api/user');
+    final profileResponse = await http.get(
+      profileUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}'
+      },
+    );
+
+    final decodedData = jsonDecode(profileResponse.body);
+    final String userId = decodedData['id'];
+
+    final url = Uri.parse('$baseUrl/api/reviews/user/$userId');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${widget.token}'
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('리뷰 데이터를 불러오지 못했습니다: ${response.body}');
+    }
   }
 
   @override
@@ -42,7 +58,7 @@ class _WroteListPageState extends State<WroteListPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          '내가 쓴 리뷰 ($reviewCount)',
+          '내가 쓴 리뷰',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: colorScheme.onSurface,
               ),
@@ -51,8 +67,8 @@ class _WroteListPageState extends State<WroteListPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: FutureBuilder<List<Review>>(
-        future: _myReviewsFuture,
+      body: FutureBuilder<List<dynamic>>(
+        future: fetchReviews(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -65,11 +81,11 @@ class _WroteListPageState extends State<WroteListPage> {
               itemBuilder: (context, index) {
                 final review = reviews[index];
                 return ListItem(
-                  nickname: review.nickname,
-                  title: review.bookTitle,
-                  content: review.reviewPreview,
-                  leadingText: review.nickname.substring(0, 1).toUpperCase(),
-                  trailingText: review.createdAt.substring(0, 10),
+                  nickname: review['author']['username'] ?? '',
+                  title: review['title'] ?? '',
+                  content: review['description'] ?? '',
+                  leadingText: (review['author']['username'] ?? 'U')[0].toUpperCase(),
+                  trailingText: '${review['_count']['likedBy'] ?? 0}',
                   onTap: () {
                     Navigator.push(
                       context,
