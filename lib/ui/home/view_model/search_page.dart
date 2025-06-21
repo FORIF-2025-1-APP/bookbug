@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bookbug/ui/book/view_model/book_detail_page.dart';
+import 'package:bookbug/ui/core/ui/bookcomponent_base.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,8 +21,9 @@ class _SearchPageState extends State<SearchPage> {
 
   String selectedCategory = '';
   List<String> categories = ['카테고리1', '카테고리2', '카테고리3'];
-  List<Map<String, dynamic>> books = [];
+
   bool _isLoading = false;
+  List<BookCard> books = [];
 
   void toggleFilter() {
     setState(() => isFilterVisible = !isFilterVisible);
@@ -44,15 +46,15 @@ class _SearchPageState extends State<SearchPage> {
     setState(() => _isLoading = true);
 
     final queryParameters = {
-      if (title.isNotEmpty) 'query': title,
+      if (title.isNotEmpty) 'title': title,
       if (author.isNotEmpty) 'author': author,
       if (publisher.isNotEmpty) 'publisher': publisher,
       if (tag.isNotEmpty) 'tag': tag,
       if (category.isNotEmpty) 'category': category,
     };
 
-    final uri = Uri.https('forifbookbugapi.seongjinemong.app', '/api/books', queryParameters);
-
+    final uri = Uri.parse('https://forifbookbugapi.seongjinemong.app/api/books/filtered')
+        .replace(queryParameters: queryParameters);
     debugPrint('검색 요청: $uri');
 
     final response = await http.get(
@@ -66,9 +68,14 @@ class _SearchPageState extends State<SearchPage> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       debugPrint('응답 내용: ${response.body}');
+      List<dynamic> raw = [];
+      if (data is Map<String, dynamic>) {
+        raw = data['items'] ?? data['books'] ?? [];
+      } else if (data is List) {
+        raw = data;
+      }
       setState(() {
-        final rawBooks = data['books'] ?? data['items'] ?? [];
-        books = List<Map<String, dynamic>>.from(rawBooks);
+        books = raw.map((e) => BookCard.fromJson(e)).toList();
         _isLoading = false;
       });
     } else {
@@ -131,68 +138,36 @@ class _SearchPageState extends State<SearchPage> {
                 ? const Center(child: CircularProgressIndicator())
                 : books.isEmpty
                     ? const Center(child: Text('검색 결과가 없습니다'))
-                    : GridView.builder(
+                    : Padding(
                         padding: const EdgeInsets.all(12),
-                        itemCount: books.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 0.6,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
+                        child: GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            childAspectRatio: 0.6,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: books.length,
+                          itemBuilder: (context, index) {
+                            final bookCard = books[index];
+                            return BookCard(
+                              id: bookCard.id,
+                              title: bookCard.title,
+                              author: bookCard.author,
+                              rating: bookCard.rating,
+                              imageUrl: bookCard.imageUrl,
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BookDetailPage(
+                                    bookId: bookCard.id,
+                                    token: widget.token,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        itemBuilder: (context, index) {
-                          final book = books[index];
-                          return GestureDetector(
-                            onTap: () {
-                              if (book['id'] != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => BookDetailPage(bookId: book['id'], token: widget.token,),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 140,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(8),
-                                    image: DecorationImage(
-                                      image: book['image'] != null
-                                          ? NetworkImage(book['image'])
-                                          : const AssetImage('assets/images/default_book.png') as ImageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  book['title'] ?? '제목 없음',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  book['author'] ?? '저자 없음',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.star, size: 14, color: Colors.amber),
-                                    const SizedBox(width: 4),
-                                    Text('${book['rating'] ?? 0}'),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
                       ),
           ),
         ],
