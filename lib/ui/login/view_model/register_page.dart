@@ -30,6 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
     final password = passwordController.text;
     final confirmPassword = confirmPasswordController.text;
     final username = usernameController.text.trim();
+  
 
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 

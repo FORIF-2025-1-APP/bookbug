@@ -251,7 +251,7 @@ class _ProfileState extends State<Profile> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(14, 24, 16, 12),
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
           child: Text(
             title,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -259,7 +259,7 @@ class _ProfileState extends State<Profile> {
         ),
 
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Container(
             width: 160, // 원하는 가로 크기
             height: 260, // 원하는 세로 크기

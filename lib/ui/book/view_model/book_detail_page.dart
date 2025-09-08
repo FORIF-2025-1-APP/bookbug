@@ -100,7 +100,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
           'Authorization': 'Bearer ${widget.token}'
         },
         body: jsonEncode({
-          'bookId': widget.bookId,
+          'favoriteBook': widget.bookId,
         }),
       );
 
